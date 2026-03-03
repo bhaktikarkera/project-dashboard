@@ -1,0 +1,8 @@
+Project Name,Project Type,Status,Priority,Developer,QA Assignee,Dev Start Date,Dev End Date,QA Start Date,QA End Date,UAT Start Date,UAT End Date,Release Date,Notes
+Documents V3 Migration,Tech Project,In QA,,Faizal,Amruta,,,,,,, 09/03/2026,
+Payments V3 Migration,Tech Project,Pending for Release,,Pratik,,,,,,,, 03/03/2026,
+Oncall [2 Mar - 8 Mar '26],Oncall,In Dev,,Neeraj,, 02/03/2026, 08/03/2026,,,,,,Round-robin rotation every 2 weeks
+TS 71,Tech Sprint,In Dev,,Shreyash,, 27/02/2026, 04/03/2026,,,,,,
+TS 72,Tech Sprint,In Dev,,Deveshi,, 18/02/2026, 25/02/2026,,,,,,
+TS 73,Tech Sprint,In Dev,,Himanshu,,,,,,,,, Dates TBD
+TS 74,Tech Sprint,In QA,,Himanshu,Sumanth,,, 27/02/2026, 05/03/2026,,,,

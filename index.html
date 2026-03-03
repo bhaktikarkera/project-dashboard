@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Management Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-size: 14px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #1e293b;
+      color: #fff;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    header .brand { font-size: 17px; font-weight: 700; letter-spacing: .3px; }
+    header .brand span { color: #60a5fa; }
+    header .controls { display: flex; align-items: center; gap: 10px; }
+    .live-badge {
+      background: #22c55e; color: #fff;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 20px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+    .btn {
+      padding: 6px 14px; border-radius: 6px;
+      border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600;
+      transition: background .15s;
+    }
+    .btn-outline {
+      background: transparent; color: #94a3b8;
+      border: 1px solid #475569;
+    }
+    .btn-outline:hover { background: #334155; color: #fff; }
+    .btn-primary { background: #3b82f6; color: #fff; }
+    .btn-primary:hover { background: #2563eb; }
+    #lastUpdated { font-size: 12px; color: #94a3b8; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background: #fff; border-radius: 10px;
+      padding: 14px 18px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+    .filter-bar label { font-size: 12px; color: #64748b; font-weight: 600; }
+    .filter-bar select {
+      padding: 6px 10px; border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      font-size: 13px; color: #1e293b;
+      background: #f8fafc; cursor: pointer;
+    }
+    .filter-bar select:focus { outline: none; border-color: #3b82f6; }
+    .filter-count {
+      margin-left: auto;
+      font-weight: 700; font-size: 14px; color: #3b82f6;
+    }
+    .btn-clear {
+      background: #fee2e2; color: #dc2626;
+      border: none; border-radius: 6px;
+      padding: 6px 12px; font-size: 12px; font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-clear:hover { background: #fecaca; }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px; margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: #fff; border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 4px solid #3b82f6;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+    .kpi-card.green  { border-left-color: #22c55e; }
+    .kpi-card.yellow { border-left-color: #eab308; }
+    .kpi-card.orange { border-left-color: #f97316; }
+    .kpi-card.red    { border-left-color: #ef4444; }
+    .kpi-card.purple { border-left-color: #8b5cf6; }
+    .kpi-label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .kpi-value { font-size: 28px; font-weight: 800; margin-top: 4px; color: #0f172a; }
+
+    /* ── CHARTS ── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px; margin-bottom: 20px;
+    }
+    @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+    .chart-card {
+      background: #fff; border-radius: 10px;
+      padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+    .chart-card h3 { font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 14px; }
+    .chart-wrap { position: relative; height: 200px; }
+
+    /* ── AT RISK ── */
+    .at-risk-section {
+      background: #fff0f0;
+      border: 1px solid #fca5a5;
+      border-left: 4px solid #ef4444;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .at-risk-section h3 { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 10px; }
+    .at-risk-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .at-risk-pill {
+      background: #fee2e2; color: #dc2626;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+    }
+    .no-risk { color: #16a34a; font-size: 13px; font-weight: 600; }
+
+    /* ── TABLE ── */
+    .table-card {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .table-header h2 { font-size: 15px; font-weight: 700; color: #0f172a; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      background: #f8fafc;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px; font-weight: 700;
+      color: #64748b; text-transform: uppercase; letter-spacing: .5px;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap; cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { background: #f1f5f9; }
+    thead th.sorted { color: #3b82f6; }
+    tbody tr { border-bottom: 1px solid #f1f5f9; transition: background .1s; }
+    tbody tr:hover { background: #f8fafc; }
+    tbody tr:last-child { border-bottom: none; }
+    td { padding: 10px 14px; vertical-align: middle; }
+    .project-name { font-weight: 600; color: #0f172a; }
+    .type-badge {
+      display: inline-block;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+    }
+    .type-Tech\ Project { background: #dbeafe; color: #1d4ed8; }
+    .type-Tech\ Sprint  { background: #ede9fe; color: #6d28d9; }
+    .type-Oncall        { background: #dcfce7; color: #15803d; }
+
+    /* Status pills */
+    .status-pill {
+      display: inline-block;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+      white-space: nowrap;
+    }
+    .s-todo                    { background: #f1f5f9; color: #475569; }
+    .s-preparing               { background: #ede9fe; color: #5b21b6; }
+    .s-in-dev                  { background: #dbeafe; color: #1d4ed8; }
+    .s-paused                  { background: #fef3c7; color: #92400e; }
+    .s-dev-complete            { background: #ccfbf1; color: #0f766e; }
+    .s-in-qa                   { background: #fef9c3; color: #713f12; }
+    .s-in-uat                  { background: #e0e7ff; color: #3730a3; }
+    .s-pending-for-release     { background: #fce7f3; color: #9d174d; }
+    .s-released                { background: #dcfce7; color: #15803d; }
+
+    /* Priority pills */
+    .p-critical { background: #fee2e2; color: #991b1b; }
+    .p-high     { background: #ffedd5; color: #9a3412; }
+    .p-medium   { background: #fef9c3; color: #713f12; }
+    .p-low      { background: #dcfce7; color: #15803d; }
+    .p-empty    { color: #94a3b8; font-style: italic; }
+
+    .overdue { color: #dc2626; font-weight: 700; }
+    .overdue::after { content: ' ⚠'; }
+    .date-cell { white-space: nowrap; font-size: 12px; color: #475569; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 12px;
+      padding: 28px; width: 500px; max-width: 95vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .modal p { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+    .modal ol { font-size: 13px; color: #475569; margin: 12px 0 20px 18px; line-height: 2; }
+    .modal input {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid #e2e8f0; border-radius: 8px;
+      font-size: 14px; margin-bottom: 16px;
+    }
+    .modal input:focus { outline: none; border-color: #3b82f6; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .sheet-status { font-size: 12px; margin-top: 6px; }
+    .sheet-status.connected { color: #16a34a; font-weight: 600; }
+    .sheet-status.error { color: #dc2626; font-weight: 600; }
+
+    .empty-state { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="brand">Project <span>Management</span> Dashboard</div>
+  <div class="controls">
+    <span class="live-badge" id="liveIndicator">LIVE</span>
+    <span id="lastUpdated"></span>
+    <button class="btn btn-outline" onclick="openModal()">⚙ Connect Sheet</button>
+    <button class="btn btn-outline" onclick="refreshData()">↻ Refresh</button>
+  </div>
+</header>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>Connect Google Sheet</h2>
+    <p>Link your Google Sheet so the dashboard updates automatically. Your sheet must be <strong>published to the web</strong> as CSV.</p>
+    <ol>
+      <li>Open your Google Sheet</li>
+      <li>Go to <strong>File → Share → Publish to web</strong></li>
+      <li>Select the sheet tab, choose <strong>Comma-separated values (.csv)</strong></li>
+      <li>Click <strong>Publish</strong> and copy the link</li>
+      <li>Paste the link below</li>
+    </ol>
+    <input type="text" id="sheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv" />
+    <div class="sheet-status" id="sheetStatus"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSheetUrl()">Connect &amp; Refresh</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="container">
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <label>Type</label>
+    <select id="filterType" onchange="applyFilters()">
+      <option value="">All Types</option>
+      <option>Tech Project</option>
+      <option>Tech Sprint</option>
+      <option>Oncall</option>
+    </select>
+
+    <label>Status</label>
+    <select id="filterStatus" onchange="applyFilters()">
+      <option value="">All Statuses</option>
+      <option>Todo</option>
+      <option>Preparing Scope of Work</option>
+      <option>In Dev</option>
+      <option>Paused</option>
+      <option>Dev Complete</option>
+      <option>In QA</option>
+      <option>In UAT</option>
+      <option>Pending for Release</option>
+      <option>Released</option>
+    </select>
+
+    <label>Developer</label>
+    <select id="filterDev" onchange="applyFilters()">
+      <option value="">All Developers</option>
+    </select>
+
+    <label>Priority</label>
+    <select id="filterPriority" onchange="applyFilters()">
+      <option value="">All Priorities</option>
+      <option>Critical</option>
+      <option>High</option>
+      <option>Medium</option>
+      <option>Low</option>
+    </select>
+
+    <div class="filter-count" id="filterCount">7 Projects</div>
+    <button class="btn-clear" onclick="clearFilters()">✕ Clear</button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Projects</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">In Dev</div>
+      <div class="kpi-value" id="kpiInDev">0</div>
+    </div>
+    <div class="kpi-card yellow">
+      <div class="kpi-label">In QA</div>
+      <div class="kpi-value" id="kpiInQA">0</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-label">Pending Release</div>
+      <div class="kpi-value" id="kpiPending">0</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Released</div>
+      <div class="kpi-value" id="kpiReleased">0</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Overdue / At Risk</div>
+      <div class="kpi-value" id="kpiOverdue">0</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Status Distribution</h3>
+      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Project Type Breakdown</h3>
+      <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Developer Workload</h3>
+      <div class="chart-wrap"><canvas id="devChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- At Risk -->
+  <div class="at-risk-section" id="atRiskSection">
+    <h3>⚠ Overdue / At Risk</h3>
+    <div class="at-risk-list" id="atRiskList"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-header">
+      <h2>All Projects</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable('name')">#  Project</th>
+            <th onclick="sortTable('type')">Type</th>
+            <th onclick="sortTable('status')">Status</th>
+            <th onclick="sortTable('priority')">Priority</th>
+            <th onclick="sortTable('developer')">Developer</th>
+            <th onclick="sortTable('qa')">QA</th>
+            <th onclick="sortTable('devStart')">Dev Start</th>
+            <th onclick="sortTable('devEnd')">Dev End</th>
+            <th onclick="sortTable('qaStart')">QA Start</th>
+            <th onclick="sortTable('qaEnd')">QA End</th>
+            <th onclick="sortTable('uatStart')">UAT Start</th>
+            <th onclick="sortTable('uatEnd')">UAT End</th>
+            <th onclick="sortTable('releaseDate')">Release Date</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ─────────────────────────────────────────
+//  DEFAULT DATA  (used until sheet connected)
+// ─────────────────────────────────────────
+const DEFAULT_PROJECTS = [
+  {
+    name: "Documents V3 Migration", type: "Tech Project", status: "In QA",
+    priority: "", developer: "Faizal", qa: "Amruta",
+    devStart: "", devEnd: "", qaStart: "", qaEnd: "",
+    uatStart: "", uatEnd: "", releaseDate: "2026-03-09", notes: ""
+  },
+  {
+    name: "Payments V3 Migration", type: "Tech Project", status: "Pending for Release",
+    priority: "", developer: "Pratik", qa: "",
+    devStart: "", devEnd: "", qaStart: "", qaEnd: "",
+    uatStart: "", uatEnd: "", releaseDate: "2026-03-03", notes: ""
+  },
+  {
+    name: "Oncall [2 Mar – 8 Mar '26]", type: "Oncall", status: "In Dev",
+    priority: "", developer: "Neeraj", qa: "",
+    devStart: "2026-03-02", devEnd: "2026-03-08", qaStart: "", qaEnd: "",
+    uatStart: "", uatEnd: "", releaseDate: "", notes: "Round-robin, every 2 weeks"
+  },
+  {
+    name: "TS 71", type: "Tech Sprint", status: "In Dev",
+    priority: "", developer: "Shreyash", qa: "",
+    devStart: "2026-02-27", devEnd: "2026-03-04", qaStart: "", qaEnd: "",
+    uatStart: "", uatEnd: "", releaseDate: "", notes: ""
+  },
+  {
+    name: "TS 72", type: "Tech Sprint", status: "In Dev",
+    priority: "", developer: "Deveshi", qa: "",
+    devStart: "2026-02-18", devEnd: "2026-02-25", qaStart: "", qaEnd: "",
+    uatStart: "", uatEnd: "", releaseDate: "", notes: ""
+  },
+  {
+    name: "TS 73", type: "Tech Sprint", status: "In Dev",
+    priority: "", developer: "Himanshu", qa: "",
+    devStart: "", devEnd: "", qaStart: "", qaEnd: "",
+    uatStart: "", uatEnd: "", releaseDate: "", notes: "Dates TBD"
+  },
+  {
+    name: "TS 74", type: "Tech Sprint", status: "In QA",
+    priority: "", developer: "Himanshu", qa: "Sumanth",
+    devStart: "", devEnd: "", qaStart: "2026-02-27", qaEnd: "2026-03-05",
+    uatStart: "", uatEnd: "", releaseDate: "", notes: ""
+  }
+];
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+let allProjects = [...DEFAULT_PROJECTS];
+let filtered = [...allProjects];
+let sortKey = '', sortAsc = true;
+let statusChartInst, typeChartInst, devChartInst;
+
+// ─────────────────────────────────────────
+//  STATUS → CSS class helper
+// ─────────────────────────────────────────
+function statusClass(s) {
+  const map = {
+    'Todo': 's-todo',
+    'Preparing Scope of Work': 's-preparing',
+    'In Dev': 's-in-dev',
+    'Paused': 's-paused',
+    'Dev Complete': 's-dev-complete',
+    'In QA': 's-in-qa',
+    'In UAT': 's-in-uat',
+    'Pending for Release': 's-pending-for-release',
+    'Released': 's-released'
+  };
+  return map[s] || 's-todo';
+}
+
+// ─────────────────────────────────────────
+//  OVERDUE CHECK
+// ─────────────────────────────────────────
+function isOverdue(dateStr) {
+  if (!dateStr) return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr); d.setHours(0,0,0,0);
+  return d < today;
+}
+
+function getOverdueProjects(list) {
+  return list.filter(p => {
+    if (['Released','Paused','Todo'].includes(p.status)) return false;
+    if (p.status === 'In Dev' && p.devEnd && isOverdue(p.devEnd)) return true;
+    if (p.status === 'In QA'  && p.qaEnd  && isOverdue(p.qaEnd))  return true;
+    if (p.status === 'Pending for Release' && p.releaseDate && isOverdue(p.releaseDate)) return true;
+    return false;
+  });
+}
+
+// ─────────────────────────────────────────
+//  FORMAT DATE
+// ─────────────────────────────────────────
+function fmt(dateStr) {
+  if (!dateStr) return '<span style="color:#cbd5e1">—</span>';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'2-digit' });
+}
+
+function fmtCell(dateStr, relevant) {
+  if (!dateStr) return '<span style="color:#cbd5e1">—</span>';
+  const over = relevant && isOverdue(dateStr);
+  const text = fmt(dateStr);
+  return over ? `<span class="overdue">${text}</span>` : `<span class="date-cell">${text}</span>`;
+}
+
+// ─────────────────────────────────────────
+//  KPI UPDATE
+// ─────────────────────────────────────────
+function updateKPIs() {
+  const data = filtered;
+  document.getElementById('kpiTotal').textContent = data.length;
+  document.getElementById('kpiInDev').textContent = data.filter(p => p.status === 'In Dev').length;
+  document.getElementById('kpiInQA').textContent = data.filter(p => p.status === 'In QA').length;
+  document.getElementById('kpiPending').textContent = data.filter(p => p.status === 'Pending for Release').length;
+  document.getElementById('kpiReleased').textContent = data.filter(p => p.status === 'Released').length;
+  const overdue = getOverdueProjects(data);
+  document.getElementById('kpiOverdue').textContent = overdue.length;
+}
+
+// ─────────────────────────────────────────
+//  AT RISK SECTION
+// ─────────────────────────────────────────
+function updateAtRisk() {
+  const overdue = getOverdueProjects(filtered);
+  const list = document.getElementById('atRiskList');
+  const section = document.getElementById('atRiskSection');
+  if (overdue.length === 0) {
+    list.innerHTML = '<span class="no-risk">✓ No overdue projects at this time</span>';
+  } else {
+    list.innerHTML = overdue.map(p =>
+      `<span class="at-risk-pill">${p.name} (${p.status})</span>`
+    ).join('');
+  }
+}
+
+// ─────────────────────────────────────────
+//  CHARTS
+// ─────────────────────────────────────────
+const STATUS_COLORS = {
+  'Todo': '#94a3b8',
+  'Preparing Scope of Work': '#8b5cf6',
+  'In Dev': '#3b82f6',
+  'Paused': '#f59e0b',
+  'Dev Complete': '#14b8a6',
+  'In QA': '#eab308',
+  'In UAT': '#6366f1',
+  'Pending for Release': '#ec4899',
+  'Released': '#22c55e'
+};
+
+const TYPE_COLORS = ['#3b82f6','#8b5cf6','#22c55e','#f97316'];
+
+function buildCharts() {
+  // Status Distribution
+  const statusCounts = {};
+  filtered.forEach(p => { statusCounts[p.status] = (statusCounts[p.status] || 0) + 1; });
+  const sLabels = Object.keys(statusCounts);
+  const sData   = sLabels.map(k => statusCounts[k]);
+  const sColors = sLabels.map(k => STATUS_COLORS[k] || '#94a3b8');
+
+  if (statusChartInst) statusChartInst.destroy();
+  statusChartInst = new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: { labels: sLabels, datasets: [{ data: sData, backgroundColor: sColors, borderWidth: 2, borderColor: '#fff' }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } }
+    }
+  });
+
+  // Type Distribution
+  const typeCounts = {};
+  filtered.forEach(p => { typeCounts[p.type] = (typeCounts[p.type] || 0) + 1; });
+  const tLabels = Object.keys(typeCounts);
+  const tData   = tLabels.map(k => typeCounts[k]);
+
+  if (typeChartInst) typeChartInst.destroy();
+  typeChartInst = new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: { labels: tLabels, datasets: [{ data: tData, backgroundColor: TYPE_COLORS, borderWidth: 2, borderColor: '#fff' }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } }
+    }
+  });
+
+  // Developer Workload
+  const devCounts = {};
+  filtered.forEach(p => {
+    if (p.developer) {
+      devCounts[p.developer] = (devCounts[p.developer] || 0) + 1;
+    }
+  });
+  const dLabels = Object.keys(devCounts);
+  const dData   = dLabels.map(k => devCounts[k]);
+
+  if (devChartInst) devChartInst.destroy();
+  devChartInst = new Chart(document.getElementById('devChart'), {
+    type: 'bar',
+    data: {
+      labels: dLabels,
+      datasets: [{
+        label: 'Projects',
+        data: dData,
+        backgroundColor: '#3b82f6',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+        y: { ticks: { font: { size: 12 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────
+//  TABLE RENDER
+// ─────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="13" class="empty-state">No projects match the current filters.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map((p, i) => {
+    const devEndOverdue = p.status === 'In Dev';
+    const qaEndOverdue  = p.status === 'In QA';
+    const relOverdue    = p.status === 'Pending for Release';
+    const prioClass = p.priority ? `status-pill p-${p.priority.toLowerCase()}` : 'p-empty';
+    const prioText  = p.priority || '—';
+
+    return `
+    <tr>
+      <td><span class="project-name">${i+1}. ${p.name}</span></td>
+      <td><span class="type-badge type-${p.type}">${p.type}</span></td>
+      <td><span class="status-pill ${statusClass(p.status)}">${p.status}</span></td>
+      <td><span class="${prioClass}">${prioText}</span></td>
+      <td>${p.developer || '<span style="color:#cbd5e1">—</span>'}</td>
+      <td>${p.qa        || '<span style="color:#cbd5e1">—</span>'}</td>
+      <td>${fmtCell(p.devStart, false)}</td>
+      <td>${fmtCell(p.devEnd,   devEndOverdue)}</td>
+      <td>${fmtCell(p.qaStart,  false)}</td>
+      <td>${fmtCell(p.qaEnd,    qaEndOverdue)}</td>
+      <td>${fmtCell(p.uatStart, false)}</td>
+      <td>${fmtCell(p.uatEnd,   false)}</td>
+      <td>${fmtCell(p.releaseDate, relOverdue)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────
+//  FILTERS
+// ─────────────────────────────────────────
+function populateDevFilter() {
+  const sel = document.getElementById('filterDev');
+  const current = sel.value;
+  const devs = [...new Set(allProjects.map(p => p.developer).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">All Developers</option>' +
+    devs.map(d => `<option ${d===current?'selected':''}>${d}</option>`).join('');
+}
+
+function applyFilters() {
+  const type   = document.getElementById('filterType').value;
+  const status = document.getElementById('filterStatus').value;
+  const dev    = document.getElementById('filterDev').value;
+  const prio   = document.getElementById('filterPriority').value;
+
+  filtered = allProjects.filter(p =>
+    (!type   || p.type      === type)   &&
+    (!status || p.status    === status) &&
+    (!dev    || p.developer === dev)    &&
+    (!prio   || p.priority  === prio)
+  );
+
+  document.getElementById('filterCount').textContent = `${filtered.length} Project${filtered.length !== 1 ? 's' : ''}`;
+  renderTable();
+  updateKPIs();
+  updateAtRisk();
+  buildCharts();
+}
+
+function clearFilters() {
+  document.getElementById('filterType').value     = '';
+  document.getElementById('filterStatus').value   = '';
+  document.getElementById('filterDev').value      = '';
+  document.getElementById('filterPriority').value = '';
+  applyFilters();
+}
+
+// ─────────────────────────────────────────
+//  SORT
+// ─────────────────────────────────────────
+function sortTable(key) {
+  if (sortKey === key) { sortAsc = !sortAsc; } else { sortKey = key; sortAsc = true; }
+  filtered.sort((a, b) => {
+    const va = (a[key] || '').toString().toLowerCase();
+    const vb = (b[key] || '').toString().toLowerCase();
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+  renderTable();
+}
+
+// ─────────────────────────────────────────
+//  GOOGLE SHEETS INTEGRATION
+// ─────────────────────────────────────────
+function openModal() {
+  document.getElementById('sheetUrlInput').value = localStorage.getItem('sheetUrl') || '';
+  document.getElementById('sheetStatus').textContent = '';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+async function saveSheetUrl() {
+  const url = document.getElementById('sheetUrlInput').value.trim();
+  if (!url) { alert('Please enter a URL.'); return; }
+  localStorage.setItem('sheetUrl', url);
+  closeModal();
+  await fetchSheetData(url);
+}
+
+async function fetchSheetData(url) {
+  const indicator = document.getElementById('liveIndicator');
+  indicator.style.background = '#f59e0b';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Network error');
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 2) throw new Error('No data rows found');
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+    allProjects = rows.slice(1).filter(r => r.some(c => c.trim())).map(r => ({
+      name:        r[headers.indexOf('project name')]        || '',
+      type:        r[headers.indexOf('project type')]        || '',
+      status:      r[headers.indexOf('status')]              || '',
+      priority:    r[headers.indexOf('priority')]            || '',
+      developer:   r[headers.indexOf('developer')]           || '',
+      qa:          r[headers.indexOf('qa assignee')]         || '',
+      devStart:    r[headers.indexOf('dev start date')]      || '',
+      devEnd:      r[headers.indexOf('dev end date')]        || '',
+      qaStart:     r[headers.indexOf('qa start date')]       || '',
+      qaEnd:       r[headers.indexOf('qa end date')]         || '',
+      uatStart:    r[headers.indexOf('uat start date')]      || '',
+      uatEnd:      r[headers.indexOf('uat end date')]        || '',
+      releaseDate: r[headers.indexOf('release date')]        || '',
+      notes:       r[headers.indexOf('notes')]               || ''
+    }));
+    indicator.style.background = '#22c55e';
+    document.getElementById('lastUpdated').textContent =
+      'Updated ' + new Date().toLocaleTimeString();
+    populateDevFilter();
+    applyFilters();
+  } catch(e) {
+    indicator.style.background = '#ef4444';
+    console.error('Sheet fetch error:', e);
+    alert('Could not load sheet. Make sure it is published to the web as CSV.\n\n' + e.message);
+  }
+}
+
+function parseCSV(text) {
+  const rows = []; let row = []; let cell = ''; let inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i+1] === '"') { cell += '"'; i++; }
+      else if (c === '"') { inQ = false; }
+      else { cell += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { row.push(cell); cell = ''; }
+      else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+      else if (c === '\r') { /* skip */ }
+      else { cell += c; }
+    }
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+async function refreshData() {
+  const url = localStorage.getItem('sheetUrl');
+  if (url) { await fetchSheetData(url); }
+  else {
+    allProjects = [...DEFAULT_PROJECTS];
+    populateDevFilter();
+    applyFilters();
+    document.getElementById('lastUpdated').textContent =
+      'Updated ' + new Date().toLocaleTimeString();
+  }
+}
+
+// ─────────────────────────────────────────
+//  AUTO REFRESH (every 5 min if sheet connected)
+// ─────────────────────────────────────────
+setInterval(() => {
+  const url = localStorage.getItem('sheetUrl');
+  if (url) fetchSheetData(url);
+}, 5 * 60 * 1000);
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+(async function init() {
+  const savedUrl = localStorage.getItem('sheetUrl');
+  if (savedUrl) {
+    await fetchSheetData(savedUrl);
+  } else {
+    populateDevFilter();
+    applyFilters();
+    document.getElementById('lastUpdated').textContent =
+      'Updated ' + new Date().toLocaleTimeString();
+  }
+})();
+</script>
+</body>
+</html>
