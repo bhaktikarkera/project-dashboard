@@ -10,278 +10,645 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f1f5f9;
-      color: #1e293b;
-      font-size: 14px;
+      background: #f4f6f8;
+      color: #1a2332;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     /* ── HEADER ── */
     header {
-      background: #1e293b;
+      background: #0f172a;
       color: #fff;
-      padding: 0 24px;
-      height: 56px;
+      padding: 0 32px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,.25);
     }
-    header .brand { font-size: 17px; font-weight: 700; letter-spacing: .3px; }
-    header .brand span { color: #60a5fa; }
-    header .controls { display: flex; align-items: center; gap: 10px; }
-    .live-badge {
-      background: #22c55e; color: #fff;
-      font-size: 11px; font-weight: 700;
-      padding: 3px 8px; border-radius: 20px;
-      animation: pulse 2s infinite;
+    .brand {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: #f1f5f9;
     }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+    .brand-sub {
+      font-size: 12px;
+      color: #64748b;
+      margin-left: 10px;
+      font-weight: 400;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #lastUpdated {
+      font-size: 11px;
+      color: #475569;
+      margin-right: 4px;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
     .btn {
-      padding: 6px 14px; border-radius: 6px;
-      border: none; cursor: pointer;
-      font-size: 13px; font-weight: 600;
-      transition: background .15s;
+      padding: 5px 14px;
+      border-radius: 5px;
+      border: 1px solid #334155;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
     }
-    .btn-outline {
-      background: transparent; color: #94a3b8;
-      border: 1px solid #475569;
+    .btn:hover { background: #1e293b; color: #f1f5f9; border-color: #475569; }
+    .btn-primary {
+      background: #2563eb; color: #fff;
+      border-color: #2563eb; font-weight: 600;
     }
-    .btn-outline:hover { background: #334155; color: #fff; }
-    .btn-primary { background: #3b82f6; color: #fff; }
-    .btn-primary:hover { background: #2563eb; }
-    #lastUpdated { font-size: 12px; color: #94a3b8; }
+    .btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
     /* ── LAYOUT ── */
-    .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+    .container { max-width: 1440px; margin: 0 auto; padding: 24px 32px; }
 
-    /* ── FILTER BAR ── */
-    .filter-bar {
-      background: #fff; border-radius: 10px;
-      padding: 14px 18px; margin-bottom: 20px;
-      display: flex; align-items: center; gap: 12px;
-      flex-wrap: wrap;
-      box-shadow: 0 1px 4px rgba(0,0,0,.07);
-    }
-    .filter-bar label { font-size: 12px; color: #64748b; font-weight: 600; }
-    .filter-bar select {
-      padding: 6px 10px; border-radius: 6px;
-      border: 1px solid #e2e8f0;
-      font-size: 13px; color: #1e293b;
-      background: #f8fafc; cursor: pointer;
-    }
-    .filter-bar select:focus { outline: none; border-color: #3b82f6; }
-    .filter-count {
-      margin-left: auto;
-      font-weight: 700; font-size: 14px; color: #3b82f6;
-    }
-    .btn-clear {
-      background: #fee2e2; color: #dc2626;
-      border: none; border-radius: 6px;
-      padding: 6px 12px; font-size: 12px; font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-clear:hover { background: #fecaca; }
-
-    /* ── KPI CARDS ── */
-    .kpi-grid {
+    /* ── KPI ROW ── */
+    .kpi-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 14px; margin-bottom: 20px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      background: #e2e8f0;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
     .kpi-card {
-      background: #fff; border-radius: 10px;
-      padding: 16px 18px;
-      border-left: 4px solid #3b82f6;
-      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      background: #fff;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .kpi-card.green  { border-left-color: #22c55e; }
-    .kpi-card.yellow { border-left-color: #eab308; }
-    .kpi-card.orange { border-left-color: #f97316; }
-    .kpi-card.red    { border-left-color: #ef4444; }
-    .kpi-card.purple { border-left-color: #8b5cf6; }
-    .kpi-label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
-    .kpi-value { font-size: 28px; font-weight: 800; margin-top: 4px; color: #0f172a; }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #94a3b8;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1;
+    }
+    .kpi-card.danger .kpi-value { color: #dc2626; }
+    .kpi-card.warning .kpi-value { color: #d97706; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .toolbar select {
+      padding: 6px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      font-size: 12px;
+      color: #334155;
+      background: #fff;
+      cursor: pointer;
+      min-width: 130px;
+    }
+    .toolbar select:focus { outline: none; border-color: #2563eb; }
+    .result-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .btn-ghost {
+      background: transparent; border: none;
+      color: #94a3b8; font-size: 12px;
+      cursor: pointer; padding: 4px 8px; border-radius: 4px;
+    }
+    .btn-ghost:hover { background: #f1f5f9; color: #475569; }
+
+    /* ── ALERT BAR ── */
+    .alert-bar {
+      background: #fff;
+      border: 1px solid #fca5a5;
+      border-left: 3px solid #dc2626;
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .alert-bar-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #dc2626;
+      white-space: nowrap;
+    }
+    .alert-bar-items { display: flex; gap: 8px; flex-wrap: wrap; }
+    .alert-item {
+      font-size: 11px;
+      background: #fef2f2;
+      color: #991b1b;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .alert-ok { font-size: 12px; color: #16a34a; font-weight: 500; }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .table-head-row {
+      padding: 14px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-head-row h2 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 9px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { color: #475569; }
+    thead th.sorted { color: #2563eb; }
+    tbody tr { border-bottom: 1px solid #f8fafc; }
+    tbody tr:hover { background: #f8fafc; }
+    tbody tr:last-child { border-bottom: none; }
+    td {
+      padding: 11px 16px;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .project-name {
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 13px;
+    }
+
+    /* Type badge */
+    .type-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .tag-tech-project { background: #eff6ff; color: #1e40af; }
+    .tag-tech-sprint  { background: #f5f3ff; color: #5b21b6; }
+    .tag-oncall       { background: #f0fdf4; color: #166534; }
+
+    /* Status — dot + label */
+    .status-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #334155;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-todo              { background: #94a3b8; }
+    .dot-preparing         { background: #7c3aed; }
+    .dot-in-dev            { background: #2563eb; }
+    .dot-paused            { background: #d97706; }
+    .dot-dev-complete      { background: #0d9488; }
+    .dot-in-qa             { background: #b45309; }
+    .dot-in-uat            { background: #4338ca; }
+    .dot-pending           { background: #9333ea; }
+    .dot-released          { background: #16a34a; }
+
+    /* Priority */
+    .priority-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 3px;
+    }
+    .p-critical { background: #fef2f2; color: #991b1b; }
+    .p-high     { background: #fff7ed; color: #9a3412; }
+    .p-medium   { background: #fefce8; color: #854d0e; }
+    .p-low      { background: #f0fdf4; color: #166534; }
+
+    /* Dates */
+    .date-val { color: #475569; font-size: 12px; }
+    .date-empty { color: #cbd5e1; }
+    .date-overdue { color: #dc2626; font-weight: 600; }
+    .overdue-flag { font-size: 10px; margin-left: 3px; }
+
+    /* Person */
+    .person { display: inline-flex; align-items: center; gap: 6px; }
+    .avatar {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .person-name { font-size: 12px; color: #334155; }
+
+    .empty-row td { text-align: center; color: #94a3b8; padding: 40px; }
+
+    /* Clickable project name */
+    .project-link {
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      border-bottom: 1px dashed #cbd5e1;
+      transition: color .15s, border-color .15s;
+    }
+    .project-link:hover { color: #2563eb; border-bottom-color: #2563eb; }
+
+    /* Project detail modal */
+    .detail-modal {
+      background: #fff; border-radius: 10px;
+      width: 580px; max-width: 95vw;
+      box-shadow: 0 25px 50px rgba(0,0,0,.15);
+      overflow: hidden;
+    }
+    .detail-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .detail-header-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .detail-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+    .detail-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .btn-edit {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 5px;
+      border: 1px solid #e2e8f0; background: #f8fafc;
+      color: #475569; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all .15s;
+    }
+    .btn-edit:hover { background: #f1f5f9; border-color: #cbd5e1; color: #1e293b; }
+    .btn-edit.active { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+    .detail-close {
+      background: none; border: none; cursor: pointer;
+      color: #94a3b8; font-size: 18px; line-height: 1;
+      padding: 2px 6px; border-radius: 4px;
+      transition: background .15s;
+    }
+    .detail-close:hover { background: #f1f5f9; color: #475569; }
+    .detail-badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .detail-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+    .detail-section-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: #94a3b8; margin-bottom: 6px;
+    }
+    .detail-description {
+      font-size: 13px; color: #334155;
+      line-height: 1.7; white-space: pre-wrap;
+    }
+    .detail-empty { font-size: 13px; color: #cbd5e1; font-style: italic; }
+    .detail-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: #2563eb; font-weight: 500;
+      text-decoration: none; word-break: break-all;
+    }
+    .detail-link:hover { text-decoration: underline; }
+
+    /* Edit mode */
+    .detail-textarea {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid #e2e8f0; border-radius: 6px;
+      font-size: 13px; color: #334155; font-family: inherit;
+      line-height: 1.7; resize: vertical; min-height: 90px;
+    }
+    .detail-textarea:focus { outline: none; border-color: #2563eb; }
+    .detail-input {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid #e2e8f0; border-radius: 6px;
+      font-size: 13px; color: #334155; font-family: inherit;
+    }
+    .detail-input:focus { outline: none; border-color: #2563eb; }
+    .detail-footer {
+      padding: 14px 24px;
+      border-top: 1px solid #f1f5f9;
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Admin password prompt */
+    .pwd-prompt {
+      background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 8px; padding: 16px 18px;
+    }
+    .pwd-prompt p { font-size: 13px; color: #475569; margin-bottom: 12px; font-weight: 500; }
+    .pwd-row { display: flex; gap: 8px; }
+    .pwd-input {
+      flex: 1; padding: 8px 12px;
+      border: 1px solid #e2e8f0; border-radius: 5px;
+      font-size: 13px; color: #0f172a; letter-spacing: 2px;
+    }
+    .pwd-input:focus { outline: none; border-color: #2563eb; }
+    .pwd-error { font-size: 12px; color: #dc2626; margin-top: 8px; font-weight: 500; }
+
+    /* Modal divider */
+    .modal-divider {
+      border: none; border-top: 1px solid #f1f5f9;
+      margin: 16px 0 14px;
+    }
+    .modal-section-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 10px;
+    }
+    .modal-hint { font-size: 11px; color: #94a3b8; margin-top: -10px; margin-bottom: 14px; }
+    details summary {
+      font-size: 12px; color: #2563eb; cursor: pointer;
+      font-weight: 600; margin-bottom: 8px;
+      list-style: none;
+    }
+    details summary::before { content: '▶  '; font-size: 10px; }
+    details[open] summary::before { content: '▼  '; }
+    .code-block {
+      background: #0f172a; color: #e2e8f0;
+      border-radius: 6px; padding: 12px 14px;
+      font-size: 11px; font-family: monospace;
+      white-space: pre; overflow-x: auto;
+      line-height: 1.6;
+    }
 
     /* ── CHARTS ── */
     .charts-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px; margin-bottom: 20px;
-    }
-    @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
-    .chart-card {
-      background: #fff; border-radius: 10px;
-      padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
-    }
-    .chart-card h3 { font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 14px; }
-    .chart-wrap { position: relative; height: 200px; }
-
-    /* ── AT RISK ── */
-    .at-risk-section {
-      background: #fff0f0;
-      border: 1px solid #fca5a5;
-      border-left: 4px solid #ef4444;
-      border-radius: 10px;
-      padding: 14px 18px;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 12px;
       margin-bottom: 20px;
     }
-    .at-risk-section h3 { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 10px; }
-    .at-risk-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .at-risk-pill {
-      background: #fee2e2; color: #dc2626;
-      padding: 4px 12px; border-radius: 20px;
-      font-size: 12px; font-weight: 600;
+    @media (max-width: 960px) { .charts-grid { grid-template-columns: 1fr 1fr; } }
+    .chart-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 18px 20px;
     }
-    .no-risk { color: #16a34a; font-size: 13px; font-weight: 600; }
-
-    /* ── TABLE ── */
-    .table-card {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.07);
-      overflow: hidden;
+    .chart-card h3 {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      margin-bottom: 14px;
     }
-    .table-header {
-      padding: 16px 18px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .table-header h2 { font-size: 15px; font-weight: 700; color: #0f172a; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    thead th {
-      background: #f8fafc;
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 11px; font-weight: 700;
-      color: #64748b; text-transform: uppercase; letter-spacing: .5px;
-      border-bottom: 2px solid #e2e8f0;
-      white-space: nowrap; cursor: pointer;
-      user-select: none;
-    }
-    thead th:hover { background: #f1f5f9; }
-    thead th.sorted { color: #3b82f6; }
-    tbody tr { border-bottom: 1px solid #f1f5f9; transition: background .1s; }
-    tbody tr:hover { background: #f8fafc; }
-    tbody tr:last-child { border-bottom: none; }
-    td { padding: 10px 14px; vertical-align: middle; }
-    .project-name { font-weight: 600; color: #0f172a; }
-    .type-badge {
-      display: inline-block;
-      padding: 2px 8px; border-radius: 4px;
-      font-size: 11px; font-weight: 600;
-    }
-    .type-Tech\ Project { background: #dbeafe; color: #1d4ed8; }
-    .type-Tech\ Sprint  { background: #ede9fe; color: #6d28d9; }
-    .type-Oncall        { background: #dcfce7; color: #15803d; }
-
-    /* Status pills */
-    .status-pill {
-      display: inline-block;
-      padding: 3px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 700;
-      white-space: nowrap;
-    }
-    .s-todo                    { background: #f1f5f9; color: #475569; }
-    .s-preparing               { background: #ede9fe; color: #5b21b6; }
-    .s-in-dev                  { background: #dbeafe; color: #1d4ed8; }
-    .s-paused                  { background: #fef3c7; color: #92400e; }
-    .s-dev-complete            { background: #ccfbf1; color: #0f766e; }
-    .s-in-qa                   { background: #fef9c3; color: #713f12; }
-    .s-in-uat                  { background: #e0e7ff; color: #3730a3; }
-    .s-pending-for-release     { background: #fce7f3; color: #9d174d; }
-    .s-released                { background: #dcfce7; color: #15803d; }
-
-    /* Priority pills */
-    .p-critical { background: #fee2e2; color: #991b1b; }
-    .p-high     { background: #ffedd5; color: #9a3412; }
-    .p-medium   { background: #fef9c3; color: #713f12; }
-    .p-low      { background: #dcfce7; color: #15803d; }
-    .p-empty    { color: #94a3b8; font-style: italic; }
-
-    .overdue { color: #dc2626; font-weight: 700; }
-    .overdue::after { content: ' ⚠'; }
-    .date-cell { white-space: nowrap; font-size: 12px; color: #475569; }
+    .chart-wrap { position: relative; height: 190px; }
 
     /* ── MODAL ── */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.5); z-index: 200;
-      align-items: center; justify-content: center;
+      background: rgba(15,23,42,.5);
+      z-index: 200; align-items: center; justify-content: center;
     }
     .modal-overlay.open { display: flex; }
     .modal {
-      background: #fff; border-radius: 12px;
-      padding: 28px; width: 500px; max-width: 95vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      background: #fff; border-radius: 10px;
+      padding: 28px; width: 480px; max-width: 95vw;
+      box-shadow: 0 25px 50px rgba(0,0,0,.15);
     }
-    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-    .modal p { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
-    .modal ol { font-size: 13px; color: #475569; margin: 12px 0 20px 18px; line-height: 2; }
+    .modal h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .modal p  { font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.6; }
+    .modal ol { font-size: 13px; color: #475569; margin: 0 0 20px 18px; line-height: 2.2; }
+    .modal ol li strong { color: #0f172a; }
     .modal input {
-      width: 100%; padding: 10px 12px;
-      border: 1px solid #e2e8f0; border-radius: 8px;
-      font-size: 14px; margin-bottom: 16px;
+      width: 100%; padding: 9px 12px;
+      border: 1px solid #e2e8f0; border-radius: 6px;
+      font-size: 13px; margin-bottom: 16px; color: #0f172a;
     }
-    .modal input:focus { outline: none; border-color: #3b82f6; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-    .sheet-status { font-size: 12px; margin-top: 6px; }
-    .sheet-status.connected { color: #16a34a; font-weight: 600; }
-    .sheet-status.error { color: #dc2626; font-weight: 600; }
-
-    .empty-state { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
+    .modal input:focus { outline: none; border-color: #2563eb; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ── -->
+<!-- HEADER -->
 <header>
-  <div class="brand">Project <span>Management</span> Dashboard</div>
-  <div class="controls">
-    <span class="live-badge" id="liveIndicator">LIVE</span>
+  <div>
+    <span class="brand">Project Management Dashboard</span>
+    <span class="brand-sub">Program Manager View</span>
+  </div>
+  <div class="header-right">
+    <span class="live-dot"></span>
     <span id="lastUpdated"></span>
-    <button class="btn btn-outline" onclick="openModal()">⚙ Connect Sheet</button>
-    <button class="btn btn-outline" onclick="refreshData()">↻ Refresh</button>
+    <button class="btn" onclick="openModal()">⚙ Connect Sheet</button>
+    <button class="btn" onclick="refreshData()">↻ Refresh</button>
   </div>
 </header>
 
-<!-- ── MODAL ── -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2>Connect Google Sheet</h2>
-    <p>Link your Google Sheet so the dashboard updates automatically. Your sheet must be <strong>published to the web</strong> as CSV.</p>
+    <p>Paste your Google Sheet URL. The sheet must be shared as <strong>"Anyone with the link can view"</strong>.</p>
     <ol>
       <li>Open your Google Sheet</li>
-      <li>Go to <strong>File → Share → Publish to web</strong></li>
-      <li>Select the sheet tab, choose <strong>Comma-separated values (.csv)</strong></li>
-      <li>Click <strong>Publish</strong> and copy the link</li>
-      <li>Paste the link below</li>
+      <li>Click <strong>Share</strong> (top right)</li>
+      <li>Under "General access" → <strong>Anyone with the link → Viewer</strong></li>
+      <li>Click <strong>Copy link</strong> and paste it below</li>
     </ol>
-    <input type="text" id="sheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv" />
-    <div class="sheet-status" id="sheetStatus"></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveSheetUrl()">Connect &amp; Refresh</button>
+    <input type="text" id="sheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/..." />
+
+    <hr class="modal-divider" />
+    <div class="modal-section-title">Admin Access (Optional)</div>
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px;">Set a private admin password — only you will use this to add, edit or delete project descriptions from the dashboard.</p>
+
+    <input type="password" id="adminPwdInput" placeholder="Admin password (only you know this)" />
+    <input type="text" id="appsScriptInput" placeholder="Apps Script Web App URL (for saving back to sheet)" />
+
+    <details>
+      <summary>How to set up the Apps Script</summary>
+      <ol style="font-size:12px;color:#475569;margin:10px 0 4px 16px;line-height:2.4;">
+        <li>Open <strong>apps-script.gs</strong> from your dashboard folder and copy all the code</li>
+        <li>In your Google Sheet → <strong>Extensions → Apps Script</strong></li>
+        <li>Delete the default code, paste, press <strong>Ctrl+S</strong> to save</li>
+        <li>Click <strong>Deploy → New deployment → Web app</strong></li>
+        <li>Execute as: <strong>Me</strong> &nbsp;|&nbsp; Who has access: <strong>Anyone</strong></li>
+        <li>Click <strong>Deploy</strong>, copy the Web App URL and paste it above</li>
+      </ol>
+    </details>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSheetUrl()">Save &amp; Refresh</button>
     </div>
   </div>
 </div>
 
-<!-- ── MAIN ── -->
+<!-- PROJECT DETAIL MODAL -->
+<div class="modal-overlay" id="detailOverlay" onclick="closeDetailModal(event)">
+  <div class="detail-modal" id="detailModal">
+
+    <div class="detail-header">
+      <div class="detail-header-top">
+        <span class="detail-title" id="detailTitle"></span>
+        <div class="detail-header-actions">
+          <button class="btn-edit" id="editBtn" onclick="clickEditBtn()" style="display:none">✏ Edit</button>
+          <button class="detail-close" onclick="document.getElementById('detailOverlay').classList.remove('open')">✕</button>
+        </div>
+      </div>
+      <div class="detail-badges" id="detailBadges"></div>
+    </div>
+
+    <!-- Admin Password Prompt -->
+    <div id="authPromptArea" style="display:none; padding: 16px 24px;">
+      <div class="pwd-prompt">
+        <p>🔒 Enter admin password to edit</p>
+        <div class="pwd-row">
+          <input class="pwd-input" type="password" id="adminPwdField"
+            placeholder="Admin password"
+            onkeydown="if(event.key==='Enter') verifyAdminPwd()" />
+          <button class="btn btn-primary" onclick="verifyAdminPwd()">Unlock</button>
+        </div>
+        <div class="pwd-error" id="pwdError"></div>
+      </div>
+    </div>
+
+    <!-- View Mode -->
+    <div class="detail-body" id="viewMode">
+      <div>
+        <div class="detail-section-label">Description</div>
+        <div id="detailDescView"></div>
+      </div>
+      <div>
+        <div class="detail-section-label">Link / Document</div>
+        <div id="detailLinkView"></div>
+      </div>
+    </div>
+
+    <!-- Edit Mode -->
+    <div class="detail-body" id="editMode" style="display:none;">
+      <div>
+        <div class="detail-section-label">Description</div>
+        <textarea class="detail-textarea" id="editDescription" placeholder="Add a project description..."></textarea>
+      </div>
+      <div>
+        <div class="detail-section-label">Link / Document</div>
+        <input class="detail-input" type="url" id="editLink" placeholder="https://..." />
+      </div>
+    </div>
+
+    <!-- Edit Footer -->
+    <div class="detail-footer" id="editFooter" style="display:none;">
+      <button class="btn" onclick="cancelEdit()">Cancel</button>
+      <button class="btn btn-primary" id="saveDetailBtn" onclick="saveProjectDetail()">Save Changes</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- MAIN -->
 <div class="container">
 
-  <!-- Filter Bar -->
-  <div class="filter-bar">
-    <label>Type</label>
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Projects</div>
+      <div class="kpi-value" id="kpiTotal">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">In Development</div>
+      <div class="kpi-value" id="kpiInDev">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">In QA</div>
+      <div class="kpi-value" id="kpiInQA">—</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">Pending Release</div>
+      <div class="kpi-value" id="kpiPending">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Released</div>
+      <div class="kpi-value" id="kpiReleased">—</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="kpi-label">Overdue / At Risk</div>
+      <div class="kpi-value" id="kpiOverdue">—</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Status Distribution</h3>
+      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Project Type</h3>
+      <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Developer Workload</h3>
+      <div class="chart-wrap"><canvas id="devChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
     <select id="filterType" onchange="applyFilters()">
       <option value="">All Types</option>
       <option>Tech Project</option>
       <option>Tech Sprint</option>
       <option>Oncall</option>
     </select>
-
-    <label>Status</label>
     <select id="filterStatus" onchange="applyFilters()">
       <option value="">All Statuses</option>
       <option>Todo</option>
@@ -294,13 +661,9 @@
       <option>Pending for Release</option>
       <option>Released</option>
     </select>
-
-    <label>Developer</label>
     <select id="filterDev" onchange="applyFilters()">
       <option value="">All Developers</option>
     </select>
-
-    <label>Priority</label>
     <select id="filterPriority" onchange="applyFilters()">
       <option value="">All Priorities</option>
       <option>Critical</option>
@@ -308,83 +671,38 @@
       <option>Medium</option>
       <option>Low</option>
     </select>
-
-    <div class="filter-count" id="filterCount">7 Projects</div>
-    <button class="btn-clear" onclick="clearFilters()">✕ Clear</button>
+    <button class="btn-ghost" onclick="clearFilters()">✕ Clear filters</button>
+    <span class="result-count" id="filterCount"></span>
   </div>
 
-  <!-- KPI Cards -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Total Projects</div>
-      <div class="kpi-value" id="kpiTotal">0</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">In Dev</div>
-      <div class="kpi-value" id="kpiInDev">0</div>
-    </div>
-    <div class="kpi-card yellow">
-      <div class="kpi-label">In QA</div>
-      <div class="kpi-value" id="kpiInQA">0</div>
-    </div>
-    <div class="kpi-card orange">
-      <div class="kpi-label">Pending Release</div>
-      <div class="kpi-value" id="kpiPending">0</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Released</div>
-      <div class="kpi-value" id="kpiReleased">0</div>
-    </div>
-    <div class="kpi-card red">
-      <div class="kpi-label">Overdue / At Risk</div>
-      <div class="kpi-value" id="kpiOverdue">0</div>
-    </div>
-  </div>
-
-  <!-- Charts -->
-  <div class="charts-grid">
-    <div class="chart-card">
-      <h3>Status Distribution</h3>
-      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>Project Type Breakdown</h3>
-      <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>Developer Workload</h3>
-      <div class="chart-wrap"><canvas id="devChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- At Risk -->
-  <div class="at-risk-section" id="atRiskSection">
-    <h3>⚠ Overdue / At Risk</h3>
-    <div class="at-risk-list" id="atRiskList"></div>
+  <!-- Alert Bar -->
+  <div class="alert-bar" id="alertBar">
+    <span class="alert-bar-label">⚠ Overdue</span>
+    <div class="alert-bar-items" id="alertItems"></div>
   </div>
 
   <!-- Table -->
-  <div class="table-card">
-    <div class="table-header">
+  <div class="table-wrap">
+    <div class="table-head-row">
       <h2>All Projects</h2>
     </div>
-    <div class="table-wrap">
+    <div class="table-scroll">
       <table>
         <thead>
           <tr>
-            <th onclick="sortTable('name')">#  Project</th>
-            <th onclick="sortTable('type')">Type</th>
-            <th onclick="sortTable('status')">Status</th>
-            <th onclick="sortTable('priority')">Priority</th>
-            <th onclick="sortTable('developer')">Developer</th>
-            <th onclick="sortTable('qa')">QA</th>
-            <th onclick="sortTable('devStart')">Dev Start</th>
-            <th onclick="sortTable('devEnd')">Dev End</th>
-            <th onclick="sortTable('qaStart')">QA Start</th>
-            <th onclick="sortTable('qaEnd')">QA End</th>
-            <th onclick="sortTable('uatStart')">UAT Start</th>
-            <th onclick="sortTable('uatEnd')">UAT End</th>
-            <th onclick="sortTable('releaseDate')">Release Date</th>
+            <th onclick="sortTable('name')" id="th-name">Project</th>
+            <th onclick="sortTable('type')" id="th-type">Type</th>
+            <th onclick="sortTable('status')" id="th-status">Status</th>
+            <th onclick="sortTable('priority')" id="th-priority">Priority</th>
+            <th onclick="sortTable('developer')" id="th-developer">Developer</th>
+            <th onclick="sortTable('devStart')" id="th-devStart">Dev Start</th>
+            <th onclick="sortTable('devEnd')" id="th-devEnd">Dev End</th>
+            <th onclick="sortTable('qa')" id="th-qa">QA</th>
+            <th onclick="sortTable('qaStart')" id="th-qaStart">QA Start</th>
+            <th onclick="sortTable('qaEnd')" id="th-qaEnd">QA End</th>
+            <th onclick="sortTable('uatStart')" id="th-uatStart">UAT Start</th>
+            <th onclick="sortTable('uatEnd')" id="th-uatEnd">UAT End</th>
+            <th onclick="sortTable('releaseDate')" id="th-releaseDate">Release Date</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -392,86 +710,31 @@
     </div>
   </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
-// ─────────────────────────────────────────
-//  DEFAULT DATA  (used until sheet connected)
-// ─────────────────────────────────────────
+// ── DEFAULT DATA ──
 const DEFAULT_PROJECTS = [
-  {
-    name: "Documents V3 Migration", type: "Tech Project", status: "In QA",
-    priority: "", developer: "Faizal", qa: "Amruta",
-    devStart: "", devEnd: "", qaStart: "", qaEnd: "",
-    uatStart: "", uatEnd: "", releaseDate: "2026-03-09", notes: ""
-  },
-  {
-    name: "Payments V3 Migration", type: "Tech Project", status: "Pending for Release",
-    priority: "", developer: "Pratik", qa: "",
-    devStart: "", devEnd: "", qaStart: "", qaEnd: "",
-    uatStart: "", uatEnd: "", releaseDate: "2026-03-03", notes: ""
-  },
-  {
-    name: "Oncall [2 Mar – 8 Mar '26]", type: "Oncall", status: "In Dev",
-    priority: "", developer: "Neeraj", qa: "",
-    devStart: "2026-03-02", devEnd: "2026-03-08", qaStart: "", qaEnd: "",
-    uatStart: "", uatEnd: "", releaseDate: "", notes: "Round-robin, every 2 weeks"
-  },
-  {
-    name: "TS 71", type: "Tech Sprint", status: "In Dev",
-    priority: "", developer: "Shreyash", qa: "",
-    devStart: "2026-02-27", devEnd: "2026-03-04", qaStart: "", qaEnd: "",
-    uatStart: "", uatEnd: "", releaseDate: "", notes: ""
-  },
-  {
-    name: "TS 72", type: "Tech Sprint", status: "In Dev",
-    priority: "", developer: "Deveshi", qa: "",
-    devStart: "2026-02-18", devEnd: "2026-02-25", qaStart: "", qaEnd: "",
-    uatStart: "", uatEnd: "", releaseDate: "", notes: ""
-  },
-  {
-    name: "TS 73", type: "Tech Sprint", status: "In Dev",
-    priority: "", developer: "Himanshu", qa: "",
-    devStart: "", devEnd: "", qaStart: "", qaEnd: "",
-    uatStart: "", uatEnd: "", releaseDate: "", notes: "Dates TBD"
-  },
-  {
-    name: "TS 74", type: "Tech Sprint", status: "In QA",
-    priority: "", developer: "Himanshu", qa: "Sumanth",
-    devStart: "", devEnd: "", qaStart: "2026-02-27", qaEnd: "2026-03-05",
-    uatStart: "", uatEnd: "", releaseDate: "", notes: ""
-  }
+  { name:"Documents V3 Migration",       type:"Tech Project", status:"In QA",               priority:"", developer:"Faizal",   qa:"Amruta",  devStart:"",           devEnd:"",           qaStart:"",           qaEnd:"",           uatStart:"", uatEnd:"", releaseDate:"2026-03-09", description:"", link:"" },
+  { name:"Payments V3 Migration",        type:"Tech Project", status:"Pending for Release",  priority:"", developer:"Pratik",   qa:"",        devStart:"",           devEnd:"",           qaStart:"",           qaEnd:"",           uatStart:"", uatEnd:"", releaseDate:"2026-03-03", description:"", link:"" },
+  { name:"Oncall [2 Mar – 8 Mar '26]",   type:"Oncall",       status:"In Dev",               priority:"", developer:"Neeraj",   qa:"",        devStart:"2026-03-02", devEnd:"2026-03-08", qaStart:"",           qaEnd:"",           uatStart:"", uatEnd:"", releaseDate:"",           description:"Round-robin on-call rotation. Developer pauses current project for the week.", link:"" },
+  { name:"TS 71",                        type:"Tech Sprint",  status:"In Dev",               priority:"", developer:"Shreyash", qa:"",        devStart:"2026-02-27", devEnd:"2026-03-04", qaStart:"",           qaEnd:"",           uatStart:"", uatEnd:"", releaseDate:"",           description:"", link:"" },
+  { name:"TS 72",                        type:"Tech Sprint",  status:"In Dev",               priority:"", developer:"Deveshi",  qa:"",        devStart:"2026-02-18", devEnd:"2026-02-25", qaStart:"",           qaEnd:"",           uatStart:"", uatEnd:"", releaseDate:"",           description:"", link:"" },
+  { name:"TS 73",                        type:"Tech Sprint",  status:"In Dev",               priority:"", developer:"Himanshu", qa:"",        devStart:"",           devEnd:"",           qaStart:"",           qaEnd:"",           uatStart:"", uatEnd:"", releaseDate:"",           description:"Dates TBD", link:"" },
+  { name:"TS 74",                        type:"Tech Sprint",  status:"In QA",                priority:"", developer:"Himanshu", qa:"Sumanth", devStart:"",           devEnd:"",           qaStart:"2026-02-27", qaEnd:"2026-03-05", uatStart:"", uatEnd:"", releaseDate:"",           description:"", link:"" }
 ];
 
-// ─────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────
+// ── STATE ──
 let allProjects = [...DEFAULT_PROJECTS];
-let filtered = [...allProjects];
+let filtered    = [...allProjects];
 let sortKey = '', sortAsc = true;
-let statusChartInst, typeChartInst, devChartInst;
 
-// ─────────────────────────────────────────
-//  STATUS → CSS class helper
-// ─────────────────────────────────────────
-function statusClass(s) {
-  const map = {
-    'Todo': 's-todo',
-    'Preparing Scope of Work': 's-preparing',
-    'In Dev': 's-in-dev',
-    'Paused': 's-paused',
-    'Dev Complete': 's-dev-complete',
-    'In QA': 's-in-qa',
-    'In UAT': 's-in-uat',
-    'Pending for Release': 's-pending-for-release',
-    'Released': 's-released'
-  };
-  return map[s] || 's-todo';
+// ── HELPERS ──
+function initials(name) {
+  if (!name) return '?';
+  return name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
 }
 
-// ─────────────────────────────────────────
-//  OVERDUE CHECK
-// ─────────────────────────────────────────
 function isOverdue(dateStr) {
   if (!dateStr) return false;
   const today = new Date(); today.setHours(0,0,0,0);
@@ -482,95 +745,181 @@ function isOverdue(dateStr) {
 function getOverdueProjects(list) {
   return list.filter(p => {
     if (['Released','Paused','Todo'].includes(p.status)) return false;
-    if (p.status === 'In Dev' && p.devEnd && isOverdue(p.devEnd)) return true;
-    if (p.status === 'In QA'  && p.qaEnd  && isOverdue(p.qaEnd))  return true;
-    if (p.status === 'Pending for Release' && p.releaseDate && isOverdue(p.releaseDate)) return true;
+    if (p.status === 'In Dev'               && p.devEnd      && isOverdue(p.devEnd))      return true;
+    if (p.status === 'In QA'                && p.qaEnd       && isOverdue(p.qaEnd))       return true;
+    if (p.status === 'Pending for Release'  && p.releaseDate && isOverdue(p.releaseDate)) return true;
     return false;
   });
 }
 
-// ─────────────────────────────────────────
-//  FORMAT DATE
-// ─────────────────────────────────────────
-function fmt(dateStr) {
-  if (!dateStr) return '<span style="color:#cbd5e1">—</span>';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'2-digit' });
-}
+function fmtDate(d) {
+  if (!d) return null;
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let day, monthIdx, year;
 
-function fmtCell(dateStr, relevant) {
-  if (!dateStr) return '<span style="color:#cbd5e1">—</span>';
-  const over = relevant && isOverdue(dateStr);
-  const text = fmt(dateStr);
-  return over ? `<span class="overdue">${text}</span>` : `<span class="date-cell">${text}</span>`;
-}
-
-// ─────────────────────────────────────────
-//  KPI UPDATE
-// ─────────────────────────────────────────
-function updateKPIs() {
-  const data = filtered;
-  document.getElementById('kpiTotal').textContent = data.length;
-  document.getElementById('kpiInDev').textContent = data.filter(p => p.status === 'In Dev').length;
-  document.getElementById('kpiInQA').textContent = data.filter(p => p.status === 'In QA').length;
-  document.getElementById('kpiPending').textContent = data.filter(p => p.status === 'Pending for Release').length;
-  document.getElementById('kpiReleased').textContent = data.filter(p => p.status === 'Released').length;
-  const overdue = getOverdueProjects(data);
-  document.getElementById('kpiOverdue').textContent = overdue.length;
-}
-
-// ─────────────────────────────────────────
-//  AT RISK SECTION
-// ─────────────────────────────────────────
-function updateAtRisk() {
-  const overdue = getOverdueProjects(filtered);
-  const list = document.getElementById('atRiskList');
-  const section = document.getElementById('atRiskSection');
-  if (overdue.length === 0) {
-    list.innerHTML = '<span class="no-risk">✓ No overdue projects at this time</span>';
+  // YYYY-MM-DD — parse manually to avoid UTC timezone shift
+  const iso = String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) {
+    year = parseInt(iso[1]); monthIdx = parseInt(iso[2]) - 1; day = parseInt(iso[3]);
   } else {
-    list.innerHTML = overdue.map(p =>
-      `<span class="at-risk-pill">${p.name} (${p.status})</span>`
-    ).join('');
+    // DD/MM/YYYY from sheet formatted values
+    const dmy = String(d).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) {
+      day = parseInt(dmy[1]); monthIdx = parseInt(dmy[2]) - 1; year = parseInt(dmy[3]);
+    } else {
+      const dt = new Date(d);
+      if (isNaN(dt)) return String(d);
+      day = dt.getDate(); monthIdx = dt.getMonth(); year = dt.getFullYear();
+    }
+  }
+
+  const suffix = [11,12,13].includes(day) ? 'th'
+    : day % 10 === 1 ? 'st'
+    : day % 10 === 2 ? 'nd'
+    : day % 10 === 3 ? 'rd' : 'th';
+  return `${day}${suffix} ${MONTHS[monthIdx]} ${year}`;
+}
+
+function dateCell(dateStr, checkOverdue) {
+  if (!dateStr) return '<span class="date-empty">—</span>';
+  const over = checkOverdue && isOverdue(dateStr);
+  const label = fmtDate(dateStr) || dateStr;
+  return over
+    ? `<span class="date-overdue">${label}<span class="overdue-flag">▲</span></span>`
+    : `<span class="date-val">${label}</span>`;
+}
+
+function statusDot(s) {
+  const map = {
+    'Todo':                   'dot-todo',
+    'Preparing Scope of Work':'dot-preparing',
+    'In Dev':                 'dot-in-dev',
+    'Paused':                 'dot-paused',
+    'Dev Complete':           'dot-dev-complete',
+    'In QA':                  'dot-in-qa',
+    'In UAT':                 'dot-in-uat',
+    'Pending for Release':    'dot-pending',
+    'Released':               'dot-released'
+  };
+  return `<span class="status-cell"><span class="status-dot ${map[s]||'dot-todo'}"></span>${s}</span>`;
+}
+
+function typeTag(t) {
+  const map = { 'Tech Project':'tag-tech-project', 'Tech Sprint':'tag-tech-sprint', 'Oncall':'tag-oncall' };
+  return `<span class="type-tag ${map[t]||''}">${t}</span>`;
+}
+
+function personCell(name) {
+  if (!name) return '<span class="date-empty">—</span>';
+  return `<span class="person"><span class="avatar">${initials(name)}</span><span class="person-name">${name}</span></span>`;
+}
+
+function priorityTag(p) {
+  if (!p) return '<span class="date-empty">—</span>';
+  return `<span class="priority-tag p-${p.toLowerCase()}">${p}</span>`;
+}
+
+// ── KPI ──
+function updateKPIs() {
+  document.getElementById('kpiTotal').textContent   = filtered.length;
+  document.getElementById('kpiInDev').textContent   = filtered.filter(p => p.status === 'In Dev').length;
+  document.getElementById('kpiInQA').textContent    = filtered.filter(p => p.status === 'In QA').length;
+  document.getElementById('kpiPending').textContent = filtered.filter(p => p.status === 'Pending for Release').length;
+  document.getElementById('kpiReleased').textContent= filtered.filter(p => p.status === 'Released').length;
+  document.getElementById('kpiOverdue').textContent = getOverdueProjects(filtered).length;
+}
+
+// ── ALERT BAR ──
+function updateAlertBar() {
+  const overdue = getOverdueProjects(filtered);
+  const bar     = document.getElementById('alertBar');
+  const items   = document.getElementById('alertItems');
+  if (overdue.length === 0) {
+    bar.style.borderLeftColor = '#16a34a';
+    bar.style.borderColor = '#bbf7d0';
+    items.innerHTML = '<span class="alert-ok">All projects are on track</span>';
+    bar.querySelector('.alert-bar-label').textContent = '✓ Status';
+    bar.querySelector('.alert-bar-label').style.color = '#16a34a';
+  } else {
+    bar.style.borderLeftColor = '#dc2626';
+    bar.style.borderColor = '#fca5a5';
+    items.innerHTML = overdue.map(p => `<span class="alert-item">${p.name} · ${p.status}</span>`).join('');
+    bar.querySelector('.alert-bar-label').textContent = '⚠ Overdue';
+    bar.querySelector('.alert-bar-label').style.color = '#dc2626';
   }
 }
 
-// ─────────────────────────────────────────
-//  CHARTS
-// ─────────────────────────────────────────
-const STATUS_COLORS = {
-  'Todo': '#94a3b8',
-  'Preparing Scope of Work': '#8b5cf6',
-  'In Dev': '#3b82f6',
-  'Paused': '#f59e0b',
-  'Dev Complete': '#14b8a6',
-  'In QA': '#eab308',
-  'In UAT': '#6366f1',
-  'Pending for Release': '#ec4899',
-  'Released': '#22c55e'
+// ── TABLE ──
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="13">No projects match the selected filters.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map((p, i) => `
+    <tr>
+      <td><span class="project-link" onclick="openDetailModal(${i})">${p.name}</span></td>
+      <td>${typeTag(p.type)}</td>
+      <td>${statusDot(p.status)}</td>
+      <td>${priorityTag(p.priority)}</td>
+      <td>${personCell(p.developer)}</td>
+      <td>${dateCell(p.devStart, false)}</td>
+      <td>${dateCell(p.devEnd,   p.status === 'In Dev')}</td>
+      <td>${personCell(p.qa)}</td>
+      <td>${dateCell(p.qaStart,  false)}</td>
+      <td>${dateCell(p.qaEnd,    p.status === 'In QA')}</td>
+      <td>${dateCell(p.uatStart, false)}</td>
+      <td>${dateCell(p.uatEnd,   p.status === 'In UAT')}</td>
+      <td>${dateCell(p.releaseDate, p.status === 'Pending for Release')}</td>
+    </tr>`).join('');
+}
+
+// ── CHARTS ──
+const STATUS_PALETTE = {
+  'Todo':                   '#c8d3de',
+  'Preparing Scope of Work':'#b3aee8',
+  'In Dev':                 '#7aaedc',
+  'Paused':                 '#f0c97a',
+  'Dev Complete':           '#6dcfbf',
+  'In QA':                  '#e8b86d',
+  'In UAT':                 '#a89fdb',
+  'Pending for Release':    '#d4a0cc',
+  'Released':               '#7ac99a'
+};
+const TYPE_PALETTE = ['#7aaedc','#b3aee8','#7ac99a'];
+let statusChartInst, typeChartInst, devChartInst;
+
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: { font: { size: 11, family: '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif' }, boxWidth: 10, padding: 10, color: '#64748b' }
+    },
+    tooltip: {
+      backgroundColor: '#0f172a', titleColor: '#f1f5f9', bodyColor: '#94a3b8',
+      cornerRadius: 6, padding: 10
+    }
+  }
 };
 
-const TYPE_COLORS = ['#3b82f6','#8b5cf6','#22c55e','#f97316'];
-
 function buildCharts() {
-  // Status Distribution
+  // Status doughnut
   const statusCounts = {};
   filtered.forEach(p => { statusCounts[p.status] = (statusCounts[p.status] || 0) + 1; });
   const sLabels = Object.keys(statusCounts);
   const sData   = sLabels.map(k => statusCounts[k]);
-  const sColors = sLabels.map(k => STATUS_COLORS[k] || '#94a3b8');
+  const sColors = sLabels.map(k => STATUS_PALETTE[k] || '#c8d3de');
 
   if (statusChartInst) statusChartInst.destroy();
   statusChartInst = new Chart(document.getElementById('statusChart'), {
     type: 'doughnut',
-    data: { labels: sLabels, datasets: [{ data: sData, backgroundColor: sColors, borderWidth: 2, borderColor: '#fff' }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } }
-    }
+    data: { labels: sLabels, datasets: [{ data: sData, backgroundColor: sColors, borderWidth: 2, borderColor: '#fff', hoverOffset: 4 }] },
+    options: { ...CHART_DEFAULTS, cutout: '65%' }
   });
 
-  // Type Distribution
+  // Type doughnut
   const typeCounts = {};
   filtered.forEach(p => { typeCounts[p.type] = (typeCounts[p.type] || 0) + 1; });
   const tLabels = Object.keys(typeCounts);
@@ -579,21 +928,14 @@ function buildCharts() {
   if (typeChartInst) typeChartInst.destroy();
   typeChartInst = new Chart(document.getElementById('typeChart'), {
     type: 'doughnut',
-    data: { labels: tLabels, datasets: [{ data: tData, backgroundColor: TYPE_COLORS, borderWidth: 2, borderColor: '#fff' }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } }
-    }
+    data: { labels: tLabels, datasets: [{ data: tData, backgroundColor: TYPE_PALETTE, borderWidth: 2, borderColor: '#fff', hoverOffset: 4 }] },
+    options: { ...CHART_DEFAULTS, cutout: '65%' }
   });
 
-  // Developer Workload
+  // Developer workload bar
   const devCounts = {};
-  filtered.forEach(p => {
-    if (p.developer) {
-      devCounts[p.developer] = (devCounts[p.developer] || 0) + 1;
-    }
-  });
-  const dLabels = Object.keys(devCounts);
+  filtered.forEach(p => { if (p.developer) devCounts[p.developer] = (devCounts[p.developer] || 0) + 1; });
+  const dLabels = Object.keys(devCounts).sort();
   const dData   = dLabels.map(k => devCounts[k]);
 
   if (devChartInst) devChartInst.destroy();
@@ -601,69 +943,27 @@ function buildCharts() {
     type: 'bar',
     data: {
       labels: dLabels,
-      datasets: [{
-        label: 'Projects',
-        data: dData,
-        backgroundColor: '#3b82f6',
-        borderRadius: 6
-      }]
+      datasets: [{ label: 'Projects', data: dData, backgroundColor: '#7aaedc', borderRadius: 4, borderSkipped: false }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      ...CHART_DEFAULTS,
       indexAxis: 'y',
-      plugins: { legend: { display: false } },
+      plugins: { ...CHART_DEFAULTS.plugins, legend: { display: false } },
       scales: {
-        x: { ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
-        y: { ticks: { font: { size: 12 } }, grid: { display: false } }
+        x: { ticks: { stepSize: 1, color: '#94a3b8', font: { size: 11 } }, grid: { color: '#f1f5f9' }, border: { display: false } },
+        y: { ticks: { color: '#475569', font: { size: 12 } }, grid: { display: false }, border: { display: false } }
       }
     }
   });
 }
 
-// ─────────────────────────────────────────
-//  TABLE RENDER
-// ─────────────────────────────────────────
-function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="13" class="empty-state">No projects match the current filters.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = filtered.map((p, i) => {
-    const devEndOverdue = p.status === 'In Dev';
-    const qaEndOverdue  = p.status === 'In QA';
-    const relOverdue    = p.status === 'Pending for Release';
-    const prioClass = p.priority ? `status-pill p-${p.priority.toLowerCase()}` : 'p-empty';
-    const prioText  = p.priority || '—';
-
-    return `
-    <tr>
-      <td><span class="project-name">${i+1}. ${p.name}</span></td>
-      <td><span class="type-badge type-${p.type}">${p.type}</span></td>
-      <td><span class="status-pill ${statusClass(p.status)}">${p.status}</span></td>
-      <td><span class="${prioClass}">${prioText}</span></td>
-      <td>${p.developer || '<span style="color:#cbd5e1">—</span>'}</td>
-      <td>${p.qa        || '<span style="color:#cbd5e1">—</span>'}</td>
-      <td>${fmtCell(p.devStart, false)}</td>
-      <td>${fmtCell(p.devEnd,   devEndOverdue)}</td>
-      <td>${fmtCell(p.qaStart,  false)}</td>
-      <td>${fmtCell(p.qaEnd,    qaEndOverdue)}</td>
-      <td>${fmtCell(p.uatStart, false)}</td>
-      <td>${fmtCell(p.uatEnd,   false)}</td>
-      <td>${fmtCell(p.releaseDate, relOverdue)}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ─────────────────────────────────────────
-//  FILTERS
-// ─────────────────────────────────────────
+// ── FILTERS ──
 function populateDevFilter() {
-  const sel = document.getElementById('filterDev');
-  const current = sel.value;
+  const sel  = document.getElementById('filterDev');
+  const cur  = sel.value;
   const devs = [...new Set(allProjects.map(p => p.developer).filter(Boolean))].sort();
   sel.innerHTML = '<option value="">All Developers</option>' +
-    devs.map(d => `<option ${d===current?'selected':''}>${d}</option>`).join('');
+    devs.map(d => `<option ${d===cur?'selected':''}>${d}</option>`).join('');
 }
 
 function applyFilters() {
@@ -679,26 +979,27 @@ function applyFilters() {
     (!prio   || p.priority  === prio)
   );
 
-  document.getElementById('filterCount').textContent = `${filtered.length} Project${filtered.length !== 1 ? 's' : ''}`;
+  document.getElementById('filterCount').textContent =
+    `${filtered.length} of ${allProjects.length} projects`;
+
   renderTable();
   updateKPIs();
-  updateAtRisk();
+  updateAlertBar();
   buildCharts();
 }
 
 function clearFilters() {
-  document.getElementById('filterType').value     = '';
-  document.getElementById('filterStatus').value   = '';
-  document.getElementById('filterDev').value      = '';
-  document.getElementById('filterPriority').value = '';
+  ['filterType','filterStatus','filterDev','filterPriority'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   applyFilters();
 }
 
-// ─────────────────────────────────────────
-//  SORT
-// ─────────────────────────────────────────
+// ── SORT ──
 function sortTable(key) {
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
   if (sortKey === key) { sortAsc = !sortAsc; } else { sortKey = key; sortAsc = true; }
+  document.getElementById('th-' + key)?.classList.add('sorted');
   filtered.sort((a, b) => {
     const va = (a[key] || '').toString().toLowerCase();
     const vb = (b[key] || '').toString().toLowerCase();
@@ -707,116 +1008,286 @@ function sortTable(key) {
   renderTable();
 }
 
-// ─────────────────────────────────────────
-//  GOOGLE SHEETS INTEGRATION
-// ─────────────────────────────────────────
+// ── PROJECT DETAIL MODAL ──
+let currentProjectIndex = null;
+let editorSession = null; // { email, token } — cleared on page reload
+
+function openDetailModal(index) {
+  currentProjectIndex = index;
+  const p = filtered[index];
+  if (!p) return;
+
+  document.getElementById('detailTitle').textContent = p.name;
+  document.getElementById('detailBadges').innerHTML =
+    typeTag(p.type) + ' ' + statusDot(p.status) +
+    (p.priority ? ' ' + priorityTag(p.priority) : '');
+
+  document.getElementById('editBtn').style.display = 'inline-flex';
+
+  showViewMode();
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function showViewMode() {
+  const p = filtered[currentProjectIndex];
+  document.getElementById('viewMode').style.display        = 'flex';
+  document.getElementById('editMode').style.display        = 'none';
+  document.getElementById('editFooter').style.display      = 'none';
+  document.getElementById('authPromptArea').style.display  = 'none';
+  document.getElementById('editBtn').classList.remove('active');
+  document.getElementById('editBtn').textContent           = '✏ Edit';
+
+  document.getElementById('detailDescView').innerHTML = p.description
+    ? `<span class="detail-description">${p.description}</span>`
+    : `<span class="detail-empty">No description added yet.</span>`;
+
+  document.getElementById('detailLinkView').innerHTML = p.link
+    ? `<a class="detail-link" href="${p.link}" target="_blank" rel="noopener">↗ ${p.link}</a>`
+    : `<span class="detail-empty">No link added yet.</span>`;
+}
+
+function showEditMode() {
+  const p = filtered[currentProjectIndex];
+  document.getElementById('viewMode').style.display       = 'none';
+  document.getElementById('editMode').style.display       = 'flex';
+  document.getElementById('editFooter').style.display     = 'flex';
+  document.getElementById('authPromptArea').style.display = 'none';
+  document.getElementById('editBtn').classList.add('active');
+  document.getElementById('editDescription').value        = p.description || '';
+  document.getElementById('editLink').value               = p.link        || '';
+  document.getElementById('saveDetailBtn').textContent    = 'Save Changes';
+  document.getElementById('saveDetailBtn').disabled       = false;
+}
+
+function clickEditBtn() {
+  if (editorSession) { showEditMode(); return; }
+  document.getElementById('viewMode').style.display       = 'none';
+  document.getElementById('authPromptArea').style.display = 'block';
+  document.getElementById('adminPwdField').value          = '';
+  document.getElementById('pwdError').textContent         = '';
+  setTimeout(function(){ document.getElementById('adminPwdField').focus(); }, 50);
+}
+
+function verifyAdminPwd() {
+  const entered = document.getElementById('adminPwdField').value;
+  const stored  = localStorage.getItem('adminPwd');
+  if (!stored) {
+    document.getElementById('pwdError').textContent =
+      'No admin password set. Go to ⚙ Connect Sheet to set one.';
+    return;
+  }
+  if (entered === stored) {
+    editorSession = { token: stored };
+    showEditMode();
+  } else {
+    document.getElementById('pwdError').textContent = 'Incorrect password. Please try again.';
+    document.getElementById('adminPwdField').select();
+  }
+}
+
+function cancelEdit() { showViewMode(); }
+
+// ── Description persistence (localStorage fallback) ──
+function getStoredDetails() {
+  try { return JSON.parse(localStorage.getItem('projectDetails') || '{}'); } catch(e) { return {}; }
+}
+function storeDetail(name, description, link) {
+  const details = getStoredDetails();
+  details[name] = { description, link };
+  localStorage.setItem('projectDetails', JSON.stringify(details));
+}
+function applyStoredDetails(projects) {
+  const details = getStoredDetails();
+  projects.forEach(p => {
+    if (details[p.name]) {
+      if (!p.description) p.description = details[p.name].description || '';
+      if (!p.link)        p.link        = details[p.name].link        || '';
+    }
+  });
+}
+
+async function saveProjectDetail() {
+  const p             = filtered[currentProjectIndex];
+  const newDesc       = document.getElementById('editDescription').value.trim();
+  const newLink       = document.getElementById('editLink').value.trim();
+  const appsScriptUrl = localStorage.getItem('appsScriptUrl');
+  const btn           = document.getElementById('saveDetailBtn');
+
+  if (!editorSession) { alert('Please unlock edit mode first.'); return; }
+
+  btn.textContent = 'Saving…'; btn.disabled = true;
+
+  // Always update local data immediately
+  p.description = newDesc; p.link = newLink;
+  const orig = allProjects.findIndex(ap => ap.name === p.name);
+  if (orig !== -1) { allProjects[orig].description = newDesc; allProjects[orig].link = newLink; }
+
+  // Persist to localStorage so it survives page refresh
+  storeDetail(p.name, newDesc, newLink);
+
+  // If no Apps Script URL, save locally only
+  if (!appsScriptUrl) {
+    btn.textContent = '✓ Saved!';
+    setTimeout(() => showViewMode(), 900);
+    return;
+  }
+
+  // Try to sync to Google Sheet
+  try {
+    const res = await fetch(appsScriptUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        name: p.name, description: newDesc,
+        link: newLink, token: localStorage.getItem('adminPwd')
+      })
+    });
+    const result = await res.json();
+    if (result.error) throw new Error(result.error);
+    btn.textContent = '✓ Saved!';
+  } catch(err) {
+    // Local save succeeded, sheet sync failed — warn but don't block
+    btn.textContent = '✓ Saved locally';
+    console.warn('Sheet sync failed:', err.message);
+  }
+
+  setTimeout(() => showViewMode(), 900);
+}
+
+function closeDetailModal(e) {
+  if (e.target === document.getElementById('detailOverlay')) {
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
+}
+
+// ── GOOGLE SHEETS (JSONP) ──
+function extractSheetId(input) {
+  const m = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return m ? m[1] : input.trim();
+}
+
+function parseGvizDate(cell) {
+  if (!cell) return '';
+  if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+    const parts = cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);
+    if (parts) {
+      const y = parts[1];
+      const m = String(parseInt(parts[2]) + 1).padStart(2, '0');
+      const d = String(parts[3]).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+  }
+  if (cell.f) return cell.f;
+  if (cell.v !== null && cell.v !== undefined) return String(cell.v);
+  return '';
+}
+
+function fetchSheetData(sheetIdOrUrl) {
+  const sheetId = extractSheetId(sheetIdOrUrl);
+  return new Promise((resolve, reject) => {
+    const cbName   = '__gviz_' + Date.now();
+    const existing = document.getElementById('gviz-script');
+    if (existing) existing.remove();
+
+    window[cbName] = function(response) {
+      delete window[cbName];
+      if (response.status === 'error') {
+        const msg = response.errors?.[0]?.detailed_message || 'Error loading sheet';
+        reject(new Error(msg)); return;
+      }
+      try {
+        const table = response.table;
+        const cols  = table.cols.map(c => (c.label || '').toLowerCase().trim());
+        const get   = (row, label) => {
+          const i = cols.indexOf(label.toLowerCase());
+          if (i === -1 || !row.c?.[i]) return '';
+          return parseGvizDate(row.c[i]);
+        };
+        allProjects = table.rows
+          .map(row => ({
+            name:        get(row, 'project name'),
+            type:        get(row, 'project type'),
+            status:      get(row, 'status'),
+            priority:    get(row, 'priority'),
+            developer:   get(row, 'developer'),
+            qa:          get(row, 'qa assignee'),
+            devStart:    get(row, 'dev start date'),
+            devEnd:      get(row, 'dev end date'),
+            qaStart:     get(row, 'qa start date'),
+            qaEnd:       get(row, 'qa end date'),
+            uatStart:    get(row, 'uat start date'),
+            uatEnd:      get(row, 'uat end date'),
+            releaseDate:  get(row, 'release date'),
+            description:  get(row, 'description'),
+            link:         get(row, 'link')
+          }))
+          .filter(p => p.name.trim());
+        applyStoredDetails(allProjects);
+        document.getElementById('lastUpdated').textContent =
+          'Last updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        populateDevFilter();
+        applyFilters();
+        resolve();
+      } catch(e) { reject(new Error('Parse error: ' + e.message)); }
+    };
+
+    const script   = document.createElement('script');
+    script.id      = 'gviz-script';
+    script.src     = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${cbName}`;
+    script.onerror = () => { delete window[cbName]; reject(new Error('Could not reach sheet. Check sharing settings.')); };
+    document.head.appendChild(script);
+  });
+}
+
 function openModal() {
-  document.getElementById('sheetUrlInput').value = localStorage.getItem('sheetUrl') || '';
-  document.getElementById('sheetStatus').textContent = '';
+  document.getElementById('sheetUrlInput').value   = localStorage.getItem('sheetUrl')      || '';
+  document.getElementById('adminPwdInput').value   = localStorage.getItem('adminPwd')      || '';
+  document.getElementById('appsScriptInput').value = localStorage.getItem('appsScriptUrl') || '';
   document.getElementById('modalOverlay').classList.add('open');
 }
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
 }
-
 async function saveSheetUrl() {
-  const url = document.getElementById('sheetUrlInput').value.trim();
-  if (!url) { alert('Please enter a URL.'); return; }
+  const url    = document.getElementById('sheetUrlInput').value.trim();
+  const pwd    = document.getElementById('adminPwdInput').value.trim();
+  const script = document.getElementById('appsScriptInput').value.trim();
+  if (!url) { alert('Please enter a Google Sheet URL.'); return; }
+
   localStorage.setItem('sheetUrl', url);
+  if (pwd)    localStorage.setItem('adminPwd',      pwd);    else localStorage.removeItem('adminPwd');
+  if (script) localStorage.setItem('appsScriptUrl', script); else localStorage.removeItem('appsScriptUrl');
+  editorSession = null;
+
   closeModal();
-  await fetchSheetData(url);
+  try { await fetchSheetData(url); }
+  catch(e) { alert('Could not connect:\n\n' + e.message); }
 }
-
-async function fetchSheetData(url) {
-  const indicator = document.getElementById('liveIndicator');
-  indicator.style.background = '#f59e0b';
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Network error');
-    const text = await res.text();
-    const rows = parseCSV(text);
-    if (rows.length < 2) throw new Error('No data rows found');
-    const headers = rows[0].map(h => h.trim().toLowerCase());
-    allProjects = rows.slice(1).filter(r => r.some(c => c.trim())).map(r => ({
-      name:        r[headers.indexOf('project name')]        || '',
-      type:        r[headers.indexOf('project type')]        || '',
-      status:      r[headers.indexOf('status')]              || '',
-      priority:    r[headers.indexOf('priority')]            || '',
-      developer:   r[headers.indexOf('developer')]           || '',
-      qa:          r[headers.indexOf('qa assignee')]         || '',
-      devStart:    r[headers.indexOf('dev start date')]      || '',
-      devEnd:      r[headers.indexOf('dev end date')]        || '',
-      qaStart:     r[headers.indexOf('qa start date')]       || '',
-      qaEnd:       r[headers.indexOf('qa end date')]         || '',
-      uatStart:    r[headers.indexOf('uat start date')]      || '',
-      uatEnd:      r[headers.indexOf('uat end date')]        || '',
-      releaseDate: r[headers.indexOf('release date')]        || '',
-      notes:       r[headers.indexOf('notes')]               || ''
-    }));
-    indicator.style.background = '#22c55e';
-    document.getElementById('lastUpdated').textContent =
-      'Updated ' + new Date().toLocaleTimeString();
-    populateDevFilter();
-    applyFilters();
-  } catch(e) {
-    indicator.style.background = '#ef4444';
-    console.error('Sheet fetch error:', e);
-    alert('Could not load sheet. Make sure it is published to the web as CSV.\n\n' + e.message);
-  }
-}
-
-function parseCSV(text) {
-  const rows = []; let row = []; let cell = ''; let inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"' && text[i+1] === '"') { cell += '"'; i++; }
-      else if (c === '"') { inQ = false; }
-      else { cell += c; }
-    } else {
-      if (c === '"') { inQ = true; }
-      else if (c === ',') { row.push(cell); cell = ''; }
-      else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
-      else if (c === '\r') { /* skip */ }
-      else { cell += c; }
-    }
-  }
-  if (cell || row.length) { row.push(cell); rows.push(row); }
-  return rows;
-}
-
 async function refreshData() {
   const url = localStorage.getItem('sheetUrl');
-  if (url) { await fetchSheetData(url); }
+  if (url) { try { await fetchSheetData(url); } catch(e) { console.error(e); } }
   else {
     allProjects = [...DEFAULT_PROJECTS];
-    populateDevFilter();
-    applyFilters();
+    applyStoredDetails(allProjects);
+    populateDevFilter(); applyFilters();
     document.getElementById('lastUpdated').textContent =
-      'Updated ' + new Date().toLocaleTimeString();
+      'Last updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   }
 }
 
-// ─────────────────────────────────────────
-//  AUTO REFRESH (every 5 min if sheet connected)
-// ─────────────────────────────────────────
+// Auto-refresh every 5 min
 setInterval(() => {
   const url = localStorage.getItem('sheetUrl');
-  if (url) fetchSheetData(url);
+  if (url) fetchSheetData(url).catch(() => {});
 }, 5 * 60 * 1000);
 
-// ─────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────
+// ── INIT ──
 (async function init() {
-  const savedUrl = localStorage.getItem('sheetUrl');
-  if (savedUrl) {
-    await fetchSheetData(savedUrl);
-  } else {
-    populateDevFilter();
-    applyFilters();
+  const saved = localStorage.getItem('sheetUrl');
+  if (saved) { try { await fetchSheetData(saved); } catch(e) { console.error(e); } }
+  else {
+    populateDevFilter(); applyFilters();
     document.getElementById('lastUpdated').textContent =
-      'Updated ' + new Date().toLocaleTimeString();
+      'Last updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   }
 })();
 </script>
