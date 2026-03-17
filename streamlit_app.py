@@ -20,11 +20,17 @@ STATUS_COLORS = {
     'Todo':                    '#64748b',
     'Preparing Scope of Work': '#8b5cf6',
     'In Dev':                  '#2563eb',
+    'Dev In Progress':         '#2563eb',
     'Paused':                  '#dc2626',
     'Dev Complete':            '#0f766e',
+    'Dev Done':                '#0f766e',
     'In QA':                   '#7c3aed',
+    'QA In Progress':          '#7c3aed',
+    'In Testing':              '#7c3aed',
     'In UAT':                  '#0891b2',
+    'UAT In Progress':         '#0891b2',
     'Pending for Release':     '#d97706',
+    'Ready for Release':       '#d97706',
     'Released':                '#16a34a',
 }
 
@@ -114,19 +120,23 @@ def fetch_data(sheet_url):
             rows.append(dict(
                 name=name,
                 type=get_cell(row, 'project type'),
-                status=get_cell(row, 'status'),
+                update=get_cell(row, 'project update'),
+                status=get_cell(row, 'project status') or get_cell(row, 'status'),
                 priority=get_cell(row, 'priority'),
                 developer=get_cell(row, 'developer'),
-                qa=get_cell(row, 'qa assignee'),
+                qa=get_cell(row, 'qa/uat assignee') or get_cell(row, 'qa assignee'),
                 devStart=get_cell(row, 'dev start date'),
                 devEnd=get_cell(row, 'dev end date'),
                 qaStart=get_cell(row, 'qa start date'),
                 qaEnd=get_cell(row, 'qa end date'),
                 uatStart=get_cell(row, 'uat start date'),
                 uatEnd=get_cell(row, 'uat end date'),
+                releaseTarget=get_cell(row, 'release target date'),
                 releaseDate=get_cell(row, 'release date'),
+                delayedBy=get_cell(row, 'delayed by'),
+                delayReason=get_cell(row, 'reason for delay'),
                 description=get_cell(row, 'description'),
-                link=get_cell(row, 'link'),
+                link=get_cell(row, 'project link') or get_cell(row, 'link'),
             ))
 
         return pd.DataFrame(rows) if rows else pd.DataFrame(DEFAULT_PROJECTS)
@@ -161,11 +171,18 @@ def project_dialog(project):
     c2.markdown(f"**QA Start:** {project['qaStart'] or '—'}")
     c2.markdown(f"**QA End:** {project['qaEnd'] or '—'}")
 
-    if any([project['uatStart'], project['uatEnd'], project['releaseDate']]):
-        c1, c2, c3 = st.columns(3)
-        c1.markdown(f"**UAT Start:** {project['uatStart'] or '—'}")
-        c2.markdown(f"**UAT End:** {project['uatEnd'] or '—'}")
-        c3.markdown(f"**Release Date:** {project['releaseDate'] or '—'}")
+    if any([project.get('uatStart'), project.get('uatEnd')]):
+        c1, c2 = st.columns(2)
+        c1.markdown(f"**UAT Start:** {project.get('uatStart') or '—'}")
+        c2.markdown(f"**UAT End:** {project.get('uatEnd') or '—'}")
+
+    if any([project.get('releaseTarget'), project.get('releaseDate')]):
+        c1, c2 = st.columns(2)
+        c1.markdown(f"**Release Target:** {project.get('releaseTarget') or '—'}")
+        c2.markdown(f"**Release Date:** {project.get('releaseDate') or '—'}")
+
+    if project.get('delayedBy') or project.get('delayReason'):
+        st.error(f"**Delayed by:** {project.get('delayedBy') or '—'}  \n**Reason:** {project.get('delayReason') or '—'}")
 
     st.divider()
 
@@ -351,10 +368,13 @@ def main():
 
     # ── TABLE ──
     col_map = {
-        'name': 'Project', 'type': 'Type', 'status': 'Status', 'priority': 'Priority',
-        'developer': 'Developer', 'devStart': 'Dev Start', 'devEnd': 'Dev End',
-        'qa': 'QA', 'qaStart': 'QA Start', 'qaEnd': 'QA End',
-        'uatStart': 'UAT Start', 'uatEnd': 'UAT End', 'releaseDate': 'Release Date',
+        'name': 'Project', 'update': 'Update', 'status': 'Status',
+        'developer': 'Developer', 'qa': 'QA / UAT',
+        'devStart': 'Dev Start', 'devEnd': 'Dev End',
+        'qaStart': 'QA Start', 'qaEnd': 'QA End',
+        'uatStart': 'UAT Start', 'uatEnd': 'UAT End',
+        'releaseTarget': 'Release Target', 'releaseDate': 'Release Date',
+        'delayedBy': 'Delayed By',
     }
     table_df = filtered[list(col_map.keys())].rename(columns=col_map).reset_index(drop=True)
 

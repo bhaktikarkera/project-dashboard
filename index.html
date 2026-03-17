@@ -563,6 +563,10 @@
 
     <!-- View Mode -->
     <div class="detail-body" id="viewMode">
+      <div id="detailDelaySection" style="display:none">
+        <div class="detail-section-label" style="color:#dc2626">⚠ Delay Info</div>
+        <div id="detailDelayView"></div>
+      </div>
       <div>
         <div class="detail-section-label">Description</div>
         <div id="detailDescView"></div>
@@ -654,11 +658,17 @@
       <option>Todo</option>
       <option>Preparing Scope of Work</option>
       <option>In Dev</option>
+      <option>Dev In Progress</option>
       <option>Paused</option>
       <option>Dev Complete</option>
+      <option>Dev Done</option>
       <option>In QA</option>
+      <option>QA In Progress</option>
+      <option>In Testing</option>
       <option>In UAT</option>
+      <option>UAT In Progress</option>
       <option>Pending for Release</option>
+      <option>Ready for Release</option>
       <option>Released</option>
     </select>
     <select id="filterDev" onchange="applyFilters()">
@@ -691,18 +701,19 @@
         <thead>
           <tr>
             <th onclick="sortTable('name')" id="th-name">Project</th>
-            <th onclick="sortTable('type')" id="th-type">Type</th>
+            <th onclick="sortTable('update')" id="th-update">Update</th>
             <th onclick="sortTable('status')" id="th-status">Status</th>
-            <th onclick="sortTable('priority')" id="th-priority">Priority</th>
             <th onclick="sortTable('developer')" id="th-developer">Developer</th>
+            <th onclick="sortTable('qa')" id="th-qa">QA / UAT</th>
             <th onclick="sortTable('devStart')" id="th-devStart">Dev Start</th>
             <th onclick="sortTable('devEnd')" id="th-devEnd">Dev End</th>
-            <th onclick="sortTable('qa')" id="th-qa">QA</th>
             <th onclick="sortTable('qaStart')" id="th-qaStart">QA Start</th>
             <th onclick="sortTable('qaEnd')" id="th-qaEnd">QA End</th>
             <th onclick="sortTable('uatStart')" id="th-uatStart">UAT Start</th>
             <th onclick="sortTable('uatEnd')" id="th-uatEnd">UAT End</th>
+            <th onclick="sortTable('releaseTarget')" id="th-releaseTarget">Release Target</th>
             <th onclick="sortTable('releaseDate')" id="th-releaseDate">Release Date</th>
+            <th onclick="sortTable('delayedBy')" id="th-delayedBy">Delayed By</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -791,6 +802,7 @@ function dateCell(dateStr, checkOverdue) {
 
 function statusDot(s) {
   const map = {
+    // Original statuses
     'Todo':                   'dot-todo',
     'Preparing Scope of Work':'dot-preparing',
     'In Dev':                 'dot-in-dev',
@@ -799,7 +811,14 @@ function statusDot(s) {
     'In QA':                  'dot-in-qa',
     'In UAT':                 'dot-in-uat',
     'Pending for Release':    'dot-pending',
-    'Released':               'dot-released'
+    'Released':               'dot-released',
+    // New sheet statuses
+    'Dev In Progress':        'dot-in-dev',
+    'QA In Progress':         'dot-in-qa',
+    'UAT In Progress':        'dot-in-uat',
+    'Dev Done':               'dot-dev-complete',
+    'Ready for Release':      'dot-pending',
+    'In Testing':             'dot-in-qa',
   };
   return `<span class="status-cell"><span class="status-dot ${map[s]||'dot-todo'}"></span>${s}</span>`;
 }
@@ -820,13 +839,18 @@ function priorityTag(p) {
 }
 
 // ── KPI ──
+const IN_DEV_STATUSES     = ['In Dev', 'Dev In Progress'];
+const IN_QA_STATUSES      = ['In QA', 'QA In Progress', 'In Testing'];
+const PENDING_STATUSES    = ['Pending for Release', 'Ready for Release'];
+const RELEASED_STATUSES   = ['Released'];
+
 function updateKPIs() {
-  document.getElementById('kpiTotal').textContent   = filtered.length;
-  document.getElementById('kpiInDev').textContent   = filtered.filter(p => p.status === 'In Dev').length;
-  document.getElementById('kpiInQA').textContent    = filtered.filter(p => p.status === 'In QA').length;
-  document.getElementById('kpiPending').textContent = filtered.filter(p => p.status === 'Pending for Release').length;
-  document.getElementById('kpiReleased').textContent= filtered.filter(p => p.status === 'Released').length;
-  document.getElementById('kpiOverdue').textContent = getOverdueProjects(filtered).length;
+  document.getElementById('kpiTotal').textContent    = filtered.length;
+  document.getElementById('kpiInDev').textContent    = filtered.filter(p => IN_DEV_STATUSES.includes(p.status)).length;
+  document.getElementById('kpiInQA').textContent     = filtered.filter(p => IN_QA_STATUSES.includes(p.status)).length;
+  document.getElementById('kpiPending').textContent  = filtered.filter(p => PENDING_STATUSES.includes(p.status)).length;
+  document.getElementById('kpiReleased').textContent = filtered.filter(p => RELEASED_STATUSES.includes(p.status)).length;
+  document.getElementById('kpiOverdue').textContent  = getOverdueProjects(filtered).length;
 }
 
 // ── ALERT BAR ──
@@ -853,24 +877,25 @@ function updateAlertBar() {
 function renderTable() {
   const tbody = document.getElementById('tableBody');
   if (!filtered.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="13">No projects match the selected filters.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="14">No projects match the selected filters.</td></tr>';
     return;
   }
   tbody.innerHTML = filtered.map((p, i) => `
     <tr>
       <td><span class="project-link" onclick="openDetailModal(${i})">${p.name}</span></td>
-      <td>${typeTag(p.type)}</td>
+      <td>${p.update ? `<span class="date-val">${p.update}</span>` : '<span class="date-empty">—</span>'}</td>
       <td>${statusDot(p.status)}</td>
-      <td>${priorityTag(p.priority)}</td>
       <td>${personCell(p.developer)}</td>
-      <td>${dateCell(p.devStart, false)}</td>
-      <td>${dateCell(p.devEnd,   p.status === 'In Dev')}</td>
       <td>${personCell(p.qa)}</td>
+      <td>${dateCell(p.devStart, false)}</td>
+      <td>${dateCell(p.devEnd,   IN_DEV_STATUSES.includes(p.status))}</td>
       <td>${dateCell(p.qaStart,  false)}</td>
-      <td>${dateCell(p.qaEnd,    p.status === 'In QA')}</td>
+      <td>${dateCell(p.qaEnd,    IN_QA_STATUSES.includes(p.status))}</td>
       <td>${dateCell(p.uatStart, false)}</td>
-      <td>${dateCell(p.uatEnd,   p.status === 'In UAT')}</td>
-      <td>${dateCell(p.releaseDate, p.status === 'Pending for Release')}</td>
+      <td>${dateCell(p.uatEnd,   false)}</td>
+      <td>${dateCell(p.releaseTarget, false)}</td>
+      <td>${dateCell(p.releaseDate, PENDING_STATUSES.includes(p.status))}</td>
+      <td>${p.delayedBy ? `<span class="date-val" style="color:#dc2626">${p.delayedBy}</span>` : '<span class="date-empty">—</span>'}</td>
     </tr>`).join('');
 }
 
@@ -884,7 +909,14 @@ const STATUS_PALETTE = {
   'In QA':                  '#e8b86d',
   'In UAT':                 '#a89fdb',
   'Pending for Release':    '#d4a0cc',
-  'Released':               '#7ac99a'
+  'Released':               '#7ac99a',
+  // New sheet statuses
+  'Dev In Progress':        '#7aaedc',
+  'QA In Progress':         '#e8b86d',
+  'UAT In Progress':        '#a89fdb',
+  'Dev Done':               '#6dcfbf',
+  'Ready for Release':      '#d4a0cc',
+  'In Testing':             '#e8b86d',
 };
 const TYPE_PALETTE = ['#7aaedc','#b3aee8','#7ac99a'];
 let statusChartInst, typeChartInst, devChartInst;
@@ -1019,8 +1051,9 @@ function openDetailModal(index) {
 
   document.getElementById('detailTitle').textContent = p.name;
   document.getElementById('detailBadges').innerHTML =
-    typeTag(p.type) + ' ' + statusDot(p.status) +
-    (p.priority ? ' ' + priorityTag(p.priority) : '');
+    (p.type ? typeTag(p.type) + ' ' : '') + statusDot(p.status) +
+    (p.priority ? ' ' + priorityTag(p.priority) : '') +
+    (p.update ? ` <span style="font-size:12px;color:#64748b;margin-left:6px;">${p.update}</span>` : '');
 
   document.getElementById('editBtn').style.display = 'inline-flex';
 
@@ -1036,6 +1069,17 @@ function showViewMode() {
   document.getElementById('authPromptArea').style.display  = 'none';
   document.getElementById('editBtn').classList.remove('active');
   document.getElementById('editBtn').textContent           = '✏ Edit';
+
+  // Delay info
+  const delaySection = document.getElementById('detailDelaySection');
+  if (p.delayedBy || p.delayReason) {
+    delaySection.style.display = 'block';
+    document.getElementById('detailDelayView').innerHTML =
+      (p.delayedBy   ? `<div><strong>Delayed by:</strong> ${p.delayedBy}</div>` : '') +
+      (p.delayReason ? `<div><strong>Reason:</strong> ${p.delayReason}</div>` : '');
+  } else {
+    delaySection.style.display = 'none';
+  }
 
   document.getElementById('detailDescView').innerHTML = p.description
     ? `<span class="detail-description">${p.description}</span>`
@@ -1204,21 +1248,25 @@ function fetchSheetData(sheetIdOrUrl) {
         };
         allProjects = table.rows
           .map(row => ({
-            name:        get(row, 'project name'),
-            type:        get(row, 'project type'),
-            status:      get(row, 'status'),
-            priority:    get(row, 'priority'),
-            developer:   get(row, 'developer'),
-            qa:          get(row, 'qa assignee'),
-            devStart:    get(row, 'dev start date'),
-            devEnd:      get(row, 'dev end date'),
-            qaStart:     get(row, 'qa start date'),
-            qaEnd:       get(row, 'qa end date'),
-            uatStart:    get(row, 'uat start date'),
-            uatEnd:      get(row, 'uat end date'),
-            releaseDate:  get(row, 'release date'),
-            description:  get(row, 'description'),
-            link:         get(row, 'link')
+            name:          get(row, 'project name'),
+            type:          get(row, 'project type'),
+            update:        get(row, 'project update'),
+            status:        get(row, 'project status') || get(row, 'status'),
+            priority:      get(row, 'priority'),
+            developer:     get(row, 'developer'),
+            qa:            get(row, 'qa/uat assignee') || get(row, 'qa assignee'),
+            devStart:      get(row, 'dev start date'),
+            devEnd:        get(row, 'dev end date'),
+            qaStart:       get(row, 'qa start date'),
+            qaEnd:         get(row, 'qa end date'),
+            uatStart:      get(row, 'uat start date'),
+            uatEnd:        get(row, 'uat end date'),
+            releaseTarget: get(row, 'release target date'),
+            releaseDate:   get(row, 'release date'),
+            delayedBy:     get(row, 'delayed by'),
+            delayReason:   get(row, 'reason for delay'),
+            description:   get(row, 'description'),
+            link:          get(row, 'project link') || get(row, 'link')
           }))
           .filter(p => p.name.trim());
         applyStoredDetails(allProjects);
