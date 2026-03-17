@@ -700,20 +700,22 @@
       <table>
         <thead>
           <tr>
-            <th onclick="sortTable('name')" id="th-name">Project</th>
-            <th onclick="sortTable('update')" id="th-update">Update</th>
-            <th onclick="sortTable('status')" id="th-status">Status</th>
+            <th onclick="sortTable('name')" id="th-name">Project Name</th>
+            <th onclick="sortTable('update')" id="th-update">Project Update</th>
+            <th onclick="sortTable('status')" id="th-status">Project Status</th>
             <th onclick="sortTable('developer')" id="th-developer">Developer</th>
-            <th onclick="sortTable('qa')" id="th-qa">QA / UAT</th>
-            <th onclick="sortTable('devStart')" id="th-devStart">Dev Start</th>
-            <th onclick="sortTable('devEnd')" id="th-devEnd">Dev End</th>
-            <th onclick="sortTable('qaStart')" id="th-qaStart">QA Start</th>
-            <th onclick="sortTable('qaEnd')" id="th-qaEnd">QA End</th>
-            <th onclick="sortTable('uatStart')" id="th-uatStart">UAT Start</th>
-            <th onclick="sortTable('uatEnd')" id="th-uatEnd">UAT End</th>
-            <th onclick="sortTable('releaseTarget')" id="th-releaseTarget">Release Target</th>
+            <th onclick="sortTable('qa')" id="th-qa">QA/UAT Assignee</th>
+            <th onclick="sortTable('devStart')" id="th-devStart">Dev Start Date</th>
+            <th onclick="sortTable('devEnd')" id="th-devEnd">Dev End Date</th>
+            <th onclick="sortTable('qaStart')" id="th-qaStart">QA Start Date</th>
+            <th onclick="sortTable('qaEnd')" id="th-qaEnd">QA End Date</th>
+            <th onclick="sortTable('uatStart')" id="th-uatStart">UAT Start Date</th>
+            <th onclick="sortTable('uatEnd')" id="th-uatEnd">UAT End Date</th>
+            <th onclick="sortTable('releaseTarget')" id="th-releaseTarget">Release Target Date</th>
             <th onclick="sortTable('releaseDate')" id="th-releaseDate">Release Date</th>
-            <th onclick="sortTable('delayedBy')" id="th-delayedBy">Delayed By</th>
+            <th onclick="sortTable('delayedBy')" id="th-delayedBy">Delayed by</th>
+            <th onclick="sortTable('delayReason')" id="th-delayReason">Reason for Delay</th>
+            <th onclick="sortTable('link')" id="th-link">Project Link</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -877,13 +879,15 @@ function updateAlertBar() {
 function renderTable() {
   const tbody = document.getElementById('tableBody');
   if (!filtered.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="14">No projects match the selected filters.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="16">No projects match the selected filters.</td></tr>';
     return;
   }
+  const txt = v => v ? `<span class="date-val">${v}</span>` : '<span class="date-empty">—</span>';
+  const red = v => v ? `<span class="date-val" style="color:#dc2626">${v}</span>` : '<span class="date-empty">—</span>';
   tbody.innerHTML = filtered.map((p, i) => `
     <tr>
       <td><span class="project-link" onclick="openDetailModal(${i})">${p.name}</span></td>
-      <td>${p.update ? `<span class="date-val">${p.update}</span>` : '<span class="date-empty">—</span>'}</td>
+      <td>${txt(p.update)}</td>
       <td>${statusDot(p.status)}</td>
       <td>${personCell(p.developer)}</td>
       <td>${personCell(p.qa)}</td>
@@ -895,7 +899,9 @@ function renderTable() {
       <td>${dateCell(p.uatEnd,   false)}</td>
       <td>${dateCell(p.releaseTarget, false)}</td>
       <td>${dateCell(p.releaseDate, PENDING_STATUSES.includes(p.status))}</td>
-      <td>${p.delayedBy ? `<span class="date-val" style="color:#dc2626">${p.delayedBy}</span>` : '<span class="date-empty">—</span>'}</td>
+      <td>${red(p.delayedBy)}</td>
+      <td>${txt(p.delayReason)}</td>
+      <td>${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="color:#2563eb;font-size:12px;">↗ Link</a>` : '<span class="date-empty">—</span>'}</td>
     </tr>`).join('');
 }
 
@@ -1329,10 +1335,13 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 // ── INIT ──
+const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1mbvazEJBSkknhwReuT7a400PWilwzxnso0u3lCWfDjY/edit';
+
 (async function init() {
-  const saved = localStorage.getItem('sheetUrl');
-  if (saved) { try { await fetchSheetData(saved); } catch(e) { console.error(e); } }
-  else {
+  const saved = localStorage.getItem('sheetUrl') || DEFAULT_SHEET_URL;
+  if (!localStorage.getItem('sheetUrl')) localStorage.setItem('sheetUrl', DEFAULT_SHEET_URL);
+  try { await fetchSheetData(saved); } catch(e) {
+    console.error(e);
     populateDevFilter(); applyFilters();
     document.getElementById('lastUpdated').textContent =
       'Last updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
